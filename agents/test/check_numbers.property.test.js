@@ -7,7 +7,7 @@ const fs = require("node:fs");
 const fc = require("fast-check");
 
 const { checkNumbers } = require("../check_numbers.js");
-const { flatten, fill, renderFixesTable, fixesTableText, FIXES_TABLE_HEADER } = require("../grant_writer.js");
+const { flatten, fill, renderFixesTable, fixesTableText, FIXES_TABLE_HEADER, PENDING_QUOTE } = require("../grant_writer.js");
 const { formatNumber, NUMBER_RE } = require("../format.js");
 const { recordArb, recordWithTemplateArb, proseArb } = require("./generators.js");
 
@@ -62,11 +62,14 @@ function isPlainObject(v) {
   return v !== null && typeof v === "object" && !Array.isArray(v);
 }
 
+// Quote-dependent fields: a null/absent value shows PENDING_QUOTE, not UNKNOWN.
+const QUOTE_FIELDS = new Set(["cost_usd", "payback_years"]);
 // The cell renderFixesTable must produce for one field of one fixes element.
 function expectedCell(fix, field) {
   const v = isPlainObject(fix) ? fix[field] : undefined;
   if (typeof v === "number" && Number.isFinite(v)) return formatNumber(v);
   if (typeof v === "string") return v;
+  if (QUOTE_FIELDS.has(field) && (v === null || v === undefined)) return PENDING_QUOTE;
   return "{UNKNOWN: " + field + "}";
 }
 

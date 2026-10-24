@@ -1,13 +1,17 @@
 "use strict";
-
 /*
  * agents/test/generators.js
  *
  * Shared fast-check arbitraries for the Grant Writer property tests.
  *
- * Records (data/record-shape.md, frozen field names):
+ * Records (data/record-shape.md, frozen field names; real shape):
  *   recordArb(options)            Record arbitrary. Strings may contain digits
- *                                 but never braces. Options:
+ *                                 but never braces. name may be null, blank or
+ *                                 absent (to exercise the flatten name
+ *                                 fallback). estimate bands are { gal, usd }
+ *                                 and fixes carry null cost_usd/payback_years
+ *                                 plus an extra `method` string, as in the real
+ *                                 data. Options:
  *                                   fixes:   "any" (default) | "valid" | "validNonEmpty"
  *                                   price:   "any" (default) | "valid"
  *                                   estimate:"any" (default) | "valid"
@@ -43,17 +47,13 @@
  *   toPlain                       deep copy with ordinary prototypes
  *   safeStringArb, proseArb, unknownPartArb, finiteNumberArb, moneyArb
  */
-
 const fc = require("fast-check");
 const { PLACEHOLDER_NAMES, isUnknownMarkerInner, flatten } = require("../grant_writer.js");
 const { formatNumber } = require("../format.js");
-
 // ---------------------------------------------------------------------------
 // Absent-key sentinel
 // ---------------------------------------------------------------------------
-
 const ABSENT = Symbol("absent");
-
 function dropAbsent(obj) {
   const out = {};
   for (const k of Object.keys(obj)) {
@@ -61,7 +61,6 @@ function dropAbsent(obj) {
   }
   return out;
 }
-
 // Deep copy with ordinary Object/Array prototypes. fast-check may build
 // null-prototype objects; Records parsed from JSON never are.
 function toPlain(v) {
@@ -73,11 +72,9 @@ function toPlain(v) {
   }
   return v;
 }
-
 // ---------------------------------------------------------------------------
 // Strings
 // ---------------------------------------------------------------------------
-
 const SAFE_CHARS = [
   ..."abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
   ..."0123456789",
@@ -86,29 +83,24 @@ const SAFE_CHARS = [
 ];
 const PROSE_CHARS = SAFE_CHARS.filter((c) => !/[0-9]/.test(c));
 const LETTERS = [..."abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"];
-
 // Record string values: may contain digits, never braces.
 const safeStringArb = fc.oneof(
   { weight: 3, arbitrary: fc.string({ unit: fc.constantFrom(...SAFE_CHARS), maxLength: 30 }) },
   { weight: 1, arbitrary: fc.string({ unit: "grapheme", maxLength: 20 }).map((s) => s.replace(/[{}]/g, "")) }
 );
-
 // Template prose: no ASCII digits, no braces. Includes whitespace and line breaks.
 const proseArb = fc.oneof(
   { weight: 3, arbitrary: fc.string({ unit: fc.constantFrom(...PROSE_CHARS), maxLength: 30 }) },
   { weight: 1, arbitrary: fc.string({ unit: "grapheme", maxLength: 20 }).map((s) => s.replace(/[0-9{}]/g, "")) }
 );
-
 // ---------------------------------------------------------------------------
 // Numbers
 // ---------------------------------------------------------------------------
-
 const finiteNumberArb = fc.oneof(
   fc.integer({ min: -1000000, max: 10000000 }),
   fc.integer({ min: -1000000000, max: 1000000000 }).map((c) => c / 100),
   fc.double({ min: -1e9, max: 1e9, noNaN: true, noDefaultInfinity: true })
 );
-
 // Money amounts, bounded so integer arithmetic on rounded values stays exact.
 // Includes values around the grant cap (0.8 * 62,500 = 50,000).
 const moneyArb = fc.oneof(
@@ -117,39 +109,41 @@ const moneyArb = fc.oneof(
   fc.double({ min: -1e7, max: 1e7, noNaN: true, noDefaultInfinity: true }),
   fc.constantFrom(0, 50000, 62499.99, 62500, 62500.01, 62500.625, 9200, 85000)
 );
-
 // saves_usd: money, plus a small pool so ties for the max are common.
 const savesArb = fc.oneof(moneyArb, fc.constantFrom(100, 420, 7600));
-
 // ---------------------------------------------------------------------------
 // Fixes
 // ---------------------------------------------------------------------------
-
+// A fix cost/payback is quote-dependent: a finite number, or null when no
+// vendor quote exists yet (the real data has cost_usd/payback_years null).
+const quoteCostArb = fc.oneof({ weight: 2, arbitrary: moneyArb }, { weight: 1, arbitrary: fc.constant(null) });
+const quotePaybackArb = fc.oneof({ weight: 2, arbitrary: finiteNumberArb }, { weight: 1, arbitrary: fc.constant(null) });
+// A valid fix: string name, finite saves_usd, cost/payback finite or null.
+// Carries the extra `method` string the real data has, which flatten ignores.
 const validFixArb = fc.record({
   name: safeStringArb,
   saves_usd: savesArb,
-  cost_usd: moneyArb,
-  payback_years: finiteNumberArb
+  cost_usd: quoteCostArb,
+  payback_years: quotePaybackArb,
+  method: safeStringArb
 });
-
-// A value that makes saves_usd or cost_usd invalid.
-const badNumberArb = fc.constantFrom(NaN, Infinity, -Infinity, null, "100", true, ABSENT);
-
+// A value that makes a numeric field an omit-triggering value (NaN, string,
+// ...), distinct from a finite number or null.
+const badNumberArb = fc.constantFrom(NaN, Infinity, -Infinity, "100", true, ABSENT);
 const maybeBadFixArb = fc
   .record({
     name: fc.oneof(safeStringArb, fc.constantFrom(null, ABSENT)),
-    saves_usd: fc.oneof(savesArb, badNumberArb),
-    cost_usd: fc.oneof(moneyArb, badNumberArb),
-    payback_years: fc.oneof(finiteNumberArb, fc.constantFrom(null, ABSENT))
+    saves_usd: fc.oneof(savesArb, fc.constantFrom(NaN, Infinity, -Infinity, null, "100", true, ABSENT)),
+    cost_usd: fc.oneof(quoteCostArb, badNumberArb),
+    payback_years: fc.oneof(quotePaybackArb, badNumberArb),
+    method: fc.oneof(safeStringArb, fc.constant(ABSENT))
   })
   .map(dropAbsent);
-
 const anyFixArb = fc.oneof(
   { weight: 6, arbitrary: validFixArb },
   { weight: 3, arbitrary: maybeBadFixArb },
   { weight: 1, arbitrary: fc.constantFrom(null, "fix") }
 );
-
 function fixesArbFor(mode) {
   if (mode === "valid") return fc.array(validFixArb, { maxLength: 6 });
   if (mode === "validNonEmpty") return fc.array(validFixArb, { minLength: 1, maxLength: 6 });
@@ -159,32 +153,38 @@ function fixesArbFor(mode) {
     { weight: 1, arbitrary: fc.constant(ABSENT) }
   );
 }
-
 // ---------------------------------------------------------------------------
 // price_per_gal and estimate
 // ---------------------------------------------------------------------------
-
 const validPriceArb = fc.oneof(
   fc.double({ min: 0.01, max: 20, noNaN: true }),
   fc.constantFrom(3.66, 3.58)
 );
 const invalidPriceArb = fc.constantFrom(0, -0, -3.66, NaN, null, "3.66", ABSENT);
-
+// An estimate band is { gal, usd }; flatten reads only .usd. usd may be finite,
+// a non-finite/wrong value, or the sub-object may be absent or not an object.
+const estBandArb = fc.oneof(
+  { weight: 5, arbitrary: fc.record({ gal: finiteNumberArb, usd: finiteNumberArb }) },
+  { weight: 1, arbitrary: fc.record({ gal: finiteNumberArb }) },
+  { weight: 1, arbitrary: fc.record({ gal: finiteNumberArb, usd: fc.constantFrom(NaN, null, "100") }) },
+  { weight: 1, arbitrary: fc.constantFrom(ABSENT, null, 100) }
+);
+const pointBandArb = estBandArb.map((b) =>
+  b !== null && typeof b === "object" && b !== ABSENT ? { ...b, method: "degree_day" } : b
+);
 const validEstimateArb = fc
   .record({
-    low: fc.oneof({ weight: 5, arbitrary: finiteNumberArb }, { weight: 1, arbitrary: fc.constant(ABSENT) }),
-    high: fc.oneof({ weight: 5, arbitrary: finiteNumberArb }, { weight: 1, arbitrary: fc.constant(ABSENT) }),
-    point: fc.oneof({ weight: 5, arbitrary: finiteNumberArb }, { weight: 1, arbitrary: fc.constant(ABSENT) }),
+    low: estBandArb,
+    high: estBandArb,
+    point: pointBandArb,
     confidence: fc.oneof(fc.constantFrom("low", "medium", "high"), safeStringArb),
     method: fc.oneof(fc.constant("degree_day"), safeStringArb)
   })
   .map(dropAbsent);
 const invalidEstimateArb = fc.constantFrom(ABSENT, null);
-
 // ---------------------------------------------------------------------------
 // Record
 // ---------------------------------------------------------------------------
-
 function recordArb(options = {}) {
   const priceArb = options.price === "valid"
     ? validPriceArb
@@ -192,18 +192,25 @@ function recordArb(options = {}) {
   const estimateArb = options.estimate === "valid"
     ? validEstimateArb
     : fc.oneof({ weight: 3, arbitrary: validEstimateArb }, { weight: 1, arbitrary: invalidEstimateArb });
-
   return fc
     .record({
       id: fc.oneof(fc.integer({ min: 1, max: 999999999 }).map((n) => "way/" + n), safeStringArb),
-      name: safeStringArb,
+      // name may be a string, or null/blank/whitespace/absent to exercise the
+      // flatten name fallback.
+      name: fc.oneof(
+        { weight: 4, arbitrary: safeStringArb },
+        { weight: 1, arbitrary: fc.constantFrom(null, "", "   ", "\t", ABSENT) }
+      ),
       lat: fc.double({ min: -90, max: 90, noNaN: true }),
       lon: fc.double({ min: -180, max: 180, noNaN: true }),
       sqft: fc.oneof(fc.integer({ min: 0, max: 200000 }), finiteNumberArb),
       bays: fc.integer({ min: 0, max: 50 }),
       covering: fc.oneof(fc.constant("double_poly (assumed)"), safeStringArb),
       town: safeStringArb,
-      utility: safeStringArb,
+      utility: fc.oneof(
+        { weight: 4, arbitrary: safeStringArb },
+        { weight: 1, arbitrary: fc.constantFrom(null, "", "   ", ABSENT) }
+      ),
       hdd: fc.integer({ min: 0, max: 12000 }),
       price_per_gal: priceArb,
       estimate: estimateArb,
@@ -216,7 +223,6 @@ function recordArb(options = {}) {
     })
     .map((r) => toPlain(dropAbsent(r)));
 }
-
 // A Flat_Record built directly from Placeholder names (covers booleans,
 // which Records do not hold at Placeholder fields).
 const placeholderFlatArb = fc
@@ -234,40 +240,32 @@ const placeholderFlatArb = fc
     )
   )
   .map((f) => toPlain(dropAbsent(f)));
-
 // ---------------------------------------------------------------------------
 // Fill helpers
 // ---------------------------------------------------------------------------
-
 function isFillableValue(v) {
   return (typeof v === "number" && Number.isFinite(v)) ||
     typeof v === "string" || typeof v === "boolean";
 }
-
 function fillablePlaceholders(flat) {
   return PLACEHOLDER_NAMES.filter(
     (n) => Object.prototype.hasOwnProperty.call(flat, n) && isFillableValue(flat[n])
   );
 }
-
 function renderValue(v) {
   if (typeof v === "number") return formatNumber(v);
   if (typeof v === "boolean") return v ? "true" : "false";
   return v;
 }
-
 function expectedFill(parts, flat) {
   return parts.map((p) => (p.kind === "placeholder" ? renderValue(flat[p.name]) : p.text)).join("");
 }
-
 // ---------------------------------------------------------------------------
 // Templates
 // ---------------------------------------------------------------------------
-
 function placeholderPart(name) {
   return { kind: "placeholder", name, text: "{" + name + "}" };
 }
-
 // {UNKNOWN: <description>} with a digit-free description holding at least
 // one non-space character.
 const unknownPartArb = fc
@@ -277,7 +275,6 @@ const unknownPartArb = fc
     if (!isUnknownMarkerInner(inner)) throw new Error("generator bug: " + inner);
     return { kind: "unknown", text: "{" + inner + "}" };
   });
-
 function makeTemplate(parts) {
   return {
     template: parts.map((p) => p.text).join(""),
@@ -285,9 +282,7 @@ function makeTemplate(parts) {
     placeholders: parts.filter((p) => p.kind === "placeholder").map((p) => p.name)
   };
 }
-
 const MAX_TOKENS = 8;
-
 function templateArb(names = PLACEHOLDER_NAMES) {
   const tokenArb = names.length > 0
     ? fc.oneof(
@@ -295,7 +290,6 @@ function templateArb(names = PLACEHOLDER_NAMES) {
       { weight: 1, arbitrary: unknownPartArb }
     )
     : unknownPartArb;
-
   return fc
     .tuple(
       fc.array(tokenArb, { minLength: 1, maxLength: MAX_TOKENS }),
@@ -318,14 +312,12 @@ function templateArb(names = PLACEHOLDER_NAMES) {
       return makeTemplate(parts);
     });
 }
-
 function recordWithTemplateArb(options = {}) {
   return recordArb(options).chain((record) => {
     const flat = flatten(record);
     return templateArb(fillablePlaceholders(flat)).map((t) => ({ record, flat, ...t }));
   });
 }
-
 // Insert extra parts at part boundaries. inserts: [[part, seed], ...]; each
 // part goes at index seed % (current length + 1). Returns a new array.
 function insertParts(parts, inserts) {
@@ -335,7 +327,6 @@ function insertParts(parts, inserts) {
   }
   return out;
 }
-
 module.exports = {
   ABSENT,
   dropAbsent,

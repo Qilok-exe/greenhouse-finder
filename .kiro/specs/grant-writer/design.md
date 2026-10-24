@@ -93,7 +93,7 @@ All files live in `agents/`. "UMD" means the file works as a Node module and as 
   - a Placeholder whose value is a number becomes `formatNumber(v)`, a string is inserted verbatim, a boolean becomes `"true"` or `"false"`;
   - any other token, or a Placeholder whose key is absent or holds `null`, `undefined`, an object or an array, is collected. If any were collected, `fill` throws once, naming all of them (3.8).
   - Text outside tokens is untouched. Inserted strings are not re-scanned.
-- `renderFixesTable(record): string[][]`. A header row (`Fix`, `Saves (USD per year)`, `Cost (USD)`, `Payback (years)`), then one row per element of `record.fixes` in array order. Number cells use `formatNumber`; string cells are copied; any other value becomes `{UNKNOWN: <field>}`. **No totals row**: a computed total is not a Flat_Record value and would fail `checkNumbers`. `fixesTableText(rows)` joins cells with ` | ` and rows with `\n`, for checking.
+- `renderFixesTable(record): string[][]`. A header row (`Fix`, `Saves (USD per year)`, `Cost (USD)`, `Payback (years)`), then one row per element of `record.fixes` in array order. Number cells use `formatNumber`; string cells are copied; a `cost_usd` or `payback_years` cell that is `null` or absent becomes `PENDING_QUOTE` (`[pending vendor quote]`); any other value becomes `{UNKNOWN: <field>}`. The extra `method` field on each fix is ignored (no column). **No totals row**: a computed total is not a Flat_Record value and would fail `checkNumbers`. `fixesTableText(rows)` joins cells with ` | ` and rows with `\n`, for checking.
 - `buildDraft(record, manifest): Draft`. Throws naming `evidence.quote_uploaded` if it is not a boolean (2.9). It computes `flat = flatten(record)` and returns `{ quoteMissingLabel, sections: [{name, text: fill(template, flat)}], fixesTable, quoteRequest: fill(QUOTE_REQUEST_TEMPLATE, flat) }`. `quoteMissingLabel` is `"application draft: quote missing"` when `quote_uploaded` is false and `null` when it is true.
 
 ### `check_numbers.js` (UMD, global `AgentCheckNumbers`; CLI when run by Node)
@@ -127,10 +127,15 @@ type Section = { name: string; criteria: string[] };
 
 // Flat_Record = Record fields copied unchanged (shallow) + Derived_Fields
 type FlatRecord = Record & Partial<{
+  // estimate_* are the .usd of each { gal, usd } band.
   estimate_low: number; estimate_high: number; estimate_point: number;
-  top_fix_name: string; top_fix_saves_usd: number; top_fix_cost_usd: number;
-  top_fix_payback_years: number;
-  grant_request: number; farmer_match: number;
+  top_fix_name: string; top_fix_saves_usd: number;
+  // Quote-dependent: a number when a vendor quote exists, else PENDING_QUOTE
+  // ("[pending vendor quote]") when cost/payback is null, else omitted.
+  top_fix_cost_usd: number | string;
+  top_fix_payback_years: number | string;
+  grant_request: number | string; farmer_match: number | string;
+  // Not quote-dependent: computed whenever saves and price allow.
   gallons_saved: number; carbon_tons_saved: number;
 }>;
 ```
@@ -139,11 +144,13 @@ type FlatRecord = Record & Partial<{
 
 | Field | Rule | Omitted when |
 |---|---|---|
-| `estimate_low/high/point` | `estimate.low/high/point` | `estimate` absent; each field individually when its source is `undefined` |
-| `top_fix_*` | Top_Fix = first index with max `saves_usd` | `fixes` absent or empty, or any element has a non-finite `saves_usd` or `cost_usd` (conservative choice: crash rather than pick from bad data) |
-| `grant_request` | `Math.round(Math.min(GRANT_SHARE * cost, GRANT_CAP_USD))` | as `top_fix_*` |
-| `farmer_match` | `Math.round(cost) - grant_request` (equal to round(cost − grant_request) because `grant_request` is an integer; avoids float drift) | as `top_fix_*` |
-| `gallons_saved` | `Math.round(top_fix_saves_usd / price_per_gal)` | as `top_fix_*`, or `price_per_gal` not a number > 0 |
+| `name` | `record.name` if a non-blank string; else `"an unnamed greenhouse in " + town`, or `"an unnamed greenhouse"` when town is not a non-empty string (digit-free, invents no name) | never (always set) |
+| `utility` | `record.utility` if a non-blank string; else `"an unspecified utility"` (digit-free; the real data has utility null for every record) | never (always set) |
+| `estimate_low/high/point` | the `.usd` of `estimate.low/high/point` (each band is `{ gal, usd }`) | `estimate` not an object, or that band's `.usd` not finite (the old plain-number shape is unsupported) |
+| `top_fix_name` / `top_fix_saves_usd` | `fixes[0].name` (when a string) / `fixes[0].saves_usd` (when finite). Top_Fix = `fixes[0]`: `fixes` is pre-sorted by `saves_usd` descending, so no max search, and later elements never invalidate it | `fixes` absent/empty or `fixes[0]` not an object (whole group); the individual field when its source is not usable |
+| `top_fix_cost_usd`, `grant_request`, `farmer_match` | if `fixes[0].cost_usd` is `null`/absent: all three = `PENDING_QUOTE`. If finite: `cost`; `grant_request = Math.round(Math.min(GRANT_SHARE * cost, GRANT_CAP_USD))`; `farmer_match = Math.round(cost) - grant_request` (integer grant avoids float drift) | `cost_usd` any other value (NaN, string, …): all three omitted so `fill` throws |
+| `top_fix_payback_years` | finite `fixes[0].payback_years` copied; `null`/absent → `PENDING_QUOTE` | any other value: omitted so `fill` throws |
+| `gallons_saved` | `Math.round(top_fix_saves_usd / price_per_gal)` — depends only on saves and price, never on a quote | `top_fix_saves_usd` not finite, or `price_per_gal` not a number > 0 |
 | `carbon_tons_saved` | `Math.round(gallons_saved * CO2_KG_PER_GALLON / 1000 * 10) / 10` | as `gallons_saved` |
 
 Cache layout:
@@ -164,9 +171,9 @@ agents/cache/
 
 Reflection: the formula criteria (3.2–3.5) are merged into one model-based property. 4.1 and 4.2 are covered by the formatter round trip, the rejection property and the fill/check round trip. 2.7 and 2.8 are merged into one equivalence.
 
-### Property 1: Top_Fix and grant split
+### Property 1: Top_Fix is fixes[0] and the grant split
 
-*For any* Record with a non-empty `fixes` array of finite numbers, `flatten(record).top_fix_saves_usd` equals the maximum `saves_usd`, the Top_Fix is the earliest element with that value, `grant_request ≤ GRANT_CAP_USD`, and `grant_request + farmer_match === Math.round(top_fix_cost_usd)`.
+*For any* Record with a non-empty `fixes` array of valid fixes, the Top_Fix is `fixes[0]`: `flatten(record).top_fix_name === fixes[0].name` and `top_fix_saves_usd === fixes[0].saves_usd` (no max search). *When* `fixes[0].cost_usd` is a finite number, `grant_request ≤ GRANT_CAP_USD` and `grant_request + farmer_match === Math.round(top_fix_cost_usd)`; *when* it is `null`, the four quote-dependent fields (`top_fix_cost_usd`, `grant_request`, `farmer_match`, `top_fix_payback_years`) are `PENDING_QUOTE`. Payback is independent of cost: `null` payback is `PENDING_QUOTE` even when cost is finite.
 
 **Validates: Requirements 3.3, 3.6**
 
@@ -220,7 +227,7 @@ Reflection: the formula criteria (3.2–3.5) are merged into one model-based pro
 
 ### Property 10: Fixes_Table is copied and checks clean
 
-*For any* Record, `renderFixesTable(record)` has one header row plus one row per element of `fixes`, in order, each cell equal to the formatted or copied element value. `checkNumbers(fixesTableText(rows), flatten(record)).pass` is `true`.
+*For any* Record, `renderFixesTable(record)` has one header row plus one row per element of `fixes`, in order, each cell equal to the formatted or copied element value, with a `null`/absent `cost_usd` or `payback_years` cell equal to `PENDING_QUOTE` and any other non-number/non-string cell equal to `{UNKNOWN: <field>}`. `checkNumbers(fixesTableText(rows), flatten(record)).pass` is `true` (PENDING_QUOTE carries no digit).
 
 **Validates: Requirements 2.6, 4.8**
 
@@ -293,7 +300,7 @@ Reflection: the formula criteria (3.2–3.5) are merged into one model-based pro
 ## Testing Strategy
 
 - **Setup**: create `agents/package.json` (CommonJS) with dependency `@aws-sdk/client-bedrock-runtime` and dev dependency `fast-check`. Tests run with the built-in runner: `node --test agents/test/`. No other framework is needed. `node_modules/` is already gitignored.
-- **Property tests** (`agents/test/*.property.test.js`): use fast-check, one `fc.assert` per property above, `{ numRuns: 100 }` minimum. Each test carries the comment `// Feature: grant-writer, Property <n>: <title>`. The shared generators are: Records in the frozen shape (strings may contain digits but no braces; `fixes` of length 0 to 6; optional invalid `price_per_gal` and `estimate`), and Templates assembled from digit-free prose, Placeholders and Unknown_Markers, never two Placeholders joined only by `,` or `.`. Cache properties use `fs.mkdtemp` directories and fake `call` functions.
+- **Property tests** (`agents/test/*.property.test.js`): use fast-check, one `fc.assert` per property above, `{ numRuns: 100 }` minimum. Each test carries the comment `// Feature: grant-writer, Property <n>: <title>`. The shared generators are: Records in the frozen real shape (strings may contain digits but no braces; `name` and `utility` may be null/blank/absent to exercise the fallbacks; `estimate` bands are `{ gal, usd }`; `fixes` of length 0 to 6 with `cost_usd`/`payback_years` finite or `null` plus an extra `method` string; optional invalid `price_per_gal` and `estimate`), and Templates assembled from digit-free prose, Placeholders and Unknown_Markers, never two Placeholders joined only by `,` or `.`. Cache properties use `fs.mkdtemp` directories and fake `call` functions.
 - **Unit and example tests**: mock mode (logs `MOCK MODE`, no network module loaded, missing-file path in the error); rulebook bytes passed unmodified to a fake `askWithPdf`; rulebook missing or empty; prompt contains the 2.4 instructions; `QUOTE_REQUEST_TEMPLATE` passes `validateTemplate`; constants exist with comments; `quote_uploaded` non-boolean; cache zero-byte entry and simulated rename failure; `precompute` writes manifests only on success.
 - **DOM examples** (`browser.js`): use a minimal fake `document` (or `jsdom` as a dev dependency if the fake grows). Checks: checkboxes default unchecked; toggling changes only `getApplicantChecks()`; the Record is deep-equal before and after; nothing outside `#agent-output` is created or changed.
 - **Smoke and integration**: the hook file exists and `node agents/check_numbers.js` exits 0 on the fixtures. Once AWS access arrives, run one live `askNova` and one `askNovaWithPdf` against the real rulebook, and check whether the SDK reads `AWS_BEARER_TOKEN_BEDROCK` on its own.

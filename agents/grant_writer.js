@@ -39,6 +39,10 @@
   // Source: CSAP FY26 RFR and Round II how-to page (Greenhouse Energy
   // Efficiency maximum $50,000).
   var GRANT_CAP_USD = 50000;
+  // Placeholder text inserted for a quote-dependent field when no vendor
+  // quote exists yet (fixes[0].cost_usd is null). It carries no digits, so
+  // checkNumbers is unaffected, and flows through fill as a plain string.
+  var PENDING_QUOTE = "[pending vendor quote]";
 
   // Kilograms of CO2 per gallon of fuel.
   // Source: user-supplied propane factor.
@@ -95,27 +99,41 @@
     return v !== null && typeof v === "object" && !Array.isArray(v);
   }
 
-  // Index of the Top_Fix (first index with the max saves_usd), or -1 when
-  // fixes is absent, empty, or any element has a non-finite saves_usd or
-  // cost_usd.
-  function topFixIndex(fixes) {
-    if (!Array.isArray(fixes) || fixes.length === 0) return -1;
-    var best = -1;
-    for (var i = 0; i < fixes.length; i++) {
-      var f = fixes[i];
-      if (!isPlainObject(f)) return -1;
-      if (typeof f.saves_usd !== "number" || !Number.isFinite(f.saves_usd)) return -1;
-      if (typeof f.cost_usd !== "number" || !Number.isFinite(f.cost_usd)) return -1;
-      if (best === -1 || f.saves_usd > fixes[best].saves_usd) best = i;
-    }
-    return best;
+  function isFiniteNumber(v) {
+    return typeof v === "number" && Number.isFinite(v);
+  }
+  function isBlankOrMissingString(v) {
+    // null, absent, or a string that is empty or only whitespace.
+    return v === null || v === undefined ||
+      (typeof v === "string" && v.trim() === "");
   }
 
   /*
    * flatten(record): a new object with every Record field copied unchanged
    * (shallow) plus each Derived_Field whose inputs are valid. A field with
-   * invalid inputs is omitted, never set to null, so fill throws on it.
-   * The Record is not modified.
+   * invalid inputs is omitted, never set to null, so fill throws on it; a
+   * quote-dependent field whose quote is absent (cost null) is PENDING_QUOTE,
+   * a plain string, not a number. The Record is not modified.
+   *
+   * Derivation (real record shape, data/record-shape.md and data/profiles.js):
+   *  - name: record.name if a non-blank string, else the town fallback
+   *    ("an unnamed greenhouse in " + town, or "an unnamed greenhouse"),
+   *    which carries no digit.
+   *  - utility: record.utility if a non-blank string, else the digit-free
+   *    fallback "an unspecified utility" (the real data has utility null).
+   *  - estimate_low/high/point: the .usd of estimate.low/high/point, each set
+   *    only when that .usd is a finite number (the old plain-number shape is
+   *    not supported).
+   *  - Top_Fix is fixes[0] (fixes are pre-sorted by saves_usd descending): no
+   *    max search, and later elements never invalidate it.
+   *  - top_fix_name/top_fix_saves_usd from fixes[0] when each is usable.
+   *  - top_fix_cost_usd, top_fix_payback_years, grant_request, farmer_match
+   *    are quote-dependent: PENDING_QUOTE when the quote is absent (cost or
+   *    payback null/absent), the computed value when cost/payback is finite,
+   *    omitted for any other value so fill throws (a crash beats a wrong
+   *    number).
+   *  - gallons_saved/carbon_tons_saved depend only on top_fix_saves_usd and a
+   *    positive finite price_per_gal, never on a quote.
    */
   function flatten(record) {
     if (!isPlainObject(record)) {
@@ -124,34 +142,67 @@
     var flat = {};
     Object.keys(record).forEach(function (k) { flat[k] = record[k]; });
 
-    // estimate_*
+    // name fallback: a non-blank string stays; otherwise a digit-free text
+    // naming the town when the town is a non-empty string.
+    if (isBlankOrMissingString(record.name)) {
+      var town = record.town;
+      flat.name = (typeof town === "string" && town !== "")
+        ? "an unnamed greenhouse in " + town
+        : "an unnamed greenhouse";
+    }
+
+    // utility fallback: the real data has utility null for every record, and
+    // the Applicant template names {utility}. A null/absent/blank utility
+    // becomes a digit-free, quote-free text so fill does not throw; it invents
+    // no utility name. (Decided with Person A; mirrors the name fallback.)
+    if (isBlankOrMissingString(record.utility)) {
+      flat.utility = "an unspecified utility";
+    }
+
+    // estimate_*: the .usd of each sub-object, only when it is finite.
     var est = record.estimate;
     if (isPlainObject(est)) {
-      if (est.low !== undefined) flat.estimate_low = est.low;
-      if (est.high !== undefined) flat.estimate_high = est.high;
-      if (est.point !== undefined) flat.estimate_point = est.point;
+      if (isPlainObject(est.low) && isFiniteNumber(est.low.usd)) flat.estimate_low = est.low.usd;
+      if (isPlainObject(est.high) && isFiniteNumber(est.high.usd)) flat.estimate_high = est.high.usd;
+      if (isPlainObject(est.point) && isFiniteNumber(est.point.usd)) flat.estimate_point = est.point.usd;
     }
 
     // top_fix_*, grant_request, farmer_match, gallons_saved, carbon_tons_saved
-    var idx = topFixIndex(record.fixes);
-    if (idx !== -1) {
-      var top = record.fixes[idx];
-      var cost = top.cost_usd;
+    var fixes = record.fixes;
+    var top = Array.isArray(fixes) && fixes.length > 0 ? fixes[0] : undefined;
+    if (isPlainObject(top)) {
       var saves = top.saves_usd;
 
-      if (top.name !== undefined) flat.top_fix_name = top.name;
-      flat.top_fix_saves_usd = saves;
-      flat.top_fix_cost_usd = cost;
-      if (top.payback_years !== undefined) flat.top_fix_payback_years = top.payback_years;
+      if (typeof top.name === "string") flat.top_fix_name = top.name;
+      if (isFiniteNumber(saves)) flat.top_fix_saves_usd = saves;
 
-      var grant = Math.round(Math.min(GRANT_SHARE * cost, GRANT_CAP_USD));
-      flat.grant_request = grant;
-      // grant is an integer, so this equals round(cost - grant) without
-      // float drift.
-      flat.farmer_match = Math.round(cost) - grant;
+      // Quote-dependent cost -> top_fix_cost_usd, grant_request, farmer_match.
+      var cost = top.cost_usd;
+      if (cost === null || cost === undefined) {
+        flat.top_fix_cost_usd = PENDING_QUOTE;
+        flat.grant_request = PENDING_QUOTE;
+        flat.farmer_match = PENDING_QUOTE;
+      } else if (isFiniteNumber(cost)) {
+        flat.top_fix_cost_usd = cost;
+        var grant = Math.round(Math.min(GRANT_SHARE * cost, GRANT_CAP_USD));
+        flat.grant_request = grant;
+        // grant is an integer, so this equals round(cost - grant) exactly.
+        flat.farmer_match = Math.round(cost) - grant;
+      }
+      // else (NaN, string, ...): omit all three so fill throws.
 
+      // Quote-dependent payback.
+      var payback = top.payback_years;
+      if (isFiniteNumber(payback)) {
+        flat.top_fix_payback_years = payback;
+      } else if (payback === null || payback === undefined) {
+        flat.top_fix_payback_years = PENDING_QUOTE;
+      }
+      // else: omit so fill throws.
+
+      // gallons_saved / carbon_tons_saved: not quote-dependent.
       var price = record.price_per_gal;
-      if (typeof price === "number" && Number.isFinite(price) && price > 0) {
+      if (isFiniteNumber(saves) && isFiniteNumber(price) && price > 0) {
         var gallons = Math.round(saves / price);
         flat.gallons_saved = gallons;
         flat.carbon_tons_saved = Math.round(gallons * CO2_KG_PER_GALLON / 1000 * 10) / 10;
@@ -285,10 +336,17 @@
     "name", "saves_usd", "cost_usd", "payback_years"
   ]);
 
+  // Fields whose absent/null value is a pending quote, not an unknown.
+  var QUOTE_FIELD = Object.create(null);
+  QUOTE_FIELD.cost_usd = true;
+  QUOTE_FIELD.payback_years = true;
   function fixesTableCell(fix, field) {
     var v = isPlainObject(fix) ? fix[field] : undefined;
     if (typeof v === "number" && Number.isFinite(v)) return formatNumber(v);
     if (typeof v === "string") return v;
+    // A quote-dependent cell that is null or absent shows the pending-quote
+    // text; any other non-number/non-string value stays an Unknown_Marker.
+    if (QUOTE_FIELD[field] && (v === null || v === undefined)) return PENDING_QUOTE;
     return "{UNKNOWN: " + field + "}";
   }
 
@@ -651,6 +709,7 @@
   var api = {
     GRANT_SHARE: GRANT_SHARE,
     GRANT_CAP_USD: GRANT_CAP_USD,
+    PENDING_QUOTE: PENDING_QUOTE,
     CO2_KG_PER_GALLON: CO2_KG_PER_GALLON,
     PLACEHOLDER_NAMES: PLACEHOLDER_NAMES,
     DERIVED_FIELDS: DERIVED_FIELDS,

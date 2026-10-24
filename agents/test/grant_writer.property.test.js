@@ -8,6 +8,7 @@ const {
   GRANT_SHARE,
   GRANT_CAP_USD,
   CO2_KG_PER_GALLON,
+  PENDING_QUOTE,
   PLACEHOLDER_NAMES,
   isUnknownMarkerInner,
   flatten,
@@ -30,38 +31,67 @@ const {
 const RUNS = { numRuns: 100 };
 const PLACEHOLDER_SET = new Set(PLACEHOLDER_NAMES);
 
-// Reference model of the Derived_Fields, written from the derivation table in
-// design.md (Data Models) and Requirement 3.2 to 3.5.
-function referenceDerived(record) {
-  const out = {};
+// Reference model of flatten, written from the derivation rules in design.md
+// (Data Models) and Requirement 3.2 to 3.6 for the real record shape: name
+// fallback, estimate_* from .usd, Top_Fix = fixes[0], PENDING_QUOTE for the
+// four quote-dependent fields when the quote is absent, gallons/carbon not
+// quote-dependent. Returns the full expected Flat_Record (Record fields plus
+// the Derived_Fields, with name overwritten when the fallback applies).
+function isPlainObj(v) {
+  return v !== null && typeof v === "object" && !Array.isArray(v);
+}
+function isFiniteNum(v) {
+  return typeof v === "number" && Number.isFinite(v);
+}
+function referenceFlat(record) {
+  const out = { ...record };
+  // name fallback.
+  const name = record.name;
+  const blank = name === null || name === undefined ||
+    (typeof name === "string" && name.trim() === "");
+  if (blank) {
+    out.name = (typeof record.town === "string" && record.town !== "")
+      ? "an unnamed greenhouse in " + record.town
+      : "an unnamed greenhouse";
+  }
+  // utility fallback.
+  const util = record.utility;
+  const utilBlank = util === null || util === undefined ||
+    (typeof util === "string" && util.trim() === "");
+  if (utilBlank) out.utility = "an unspecified utility";
+  // estimate_* from .usd.
   const est = record.estimate;
-  if (est !== null && typeof est === "object" && !Array.isArray(est)) {
+  if (isPlainObj(est)) {
     for (const k of ["low", "high", "point"]) {
-      if (est[k] !== undefined) out["estimate_" + k] = est[k];
+      const band = est[k];
+      if (isPlainObj(band) && isFiniteNum(band.usd)) out["estimate_" + k] = band.usd;
     }
   }
-
+  // Top_Fix = fixes[0].
   const fixes = record.fixes;
-  const fixesValid = Array.isArray(fixes) && fixes.length > 0 && fixes.every(
-    (f) => f !== null && typeof f === "object" && !Array.isArray(f) &&
-      typeof f.saves_usd === "number" && Number.isFinite(f.saves_usd) &&
-      typeof f.cost_usd === "number" && Number.isFinite(f.cost_usd)
-  );
-  if (!fixesValid) return out;
-
-  const max = Math.max(...fixes.map((f) => f.saves_usd));
-  const top = fixes[fixes.findIndex((f) => f.saves_usd === max)];
-  if (top.name !== undefined) out.top_fix_name = top.name;
-  out.top_fix_saves_usd = top.saves_usd;
-  out.top_fix_cost_usd = top.cost_usd;
-  if (top.payback_years !== undefined) out.top_fix_payback_years = top.payback_years;
-  out.grant_request = Math.round(Math.min(GRANT_SHARE * top.cost_usd, GRANT_CAP_USD));
-  out.farmer_match = Math.round(top.cost_usd) - out.grant_request;
-
-  const p = record.price_per_gal;
-  if (typeof p === "number" && Number.isFinite(p) && p > 0) {
-    out.gallons_saved = Math.round(top.saves_usd / p);
-    out.carbon_tons_saved = Math.round(out.gallons_saved * CO2_KG_PER_GALLON / 1000 * 10) / 10;
+  const top = Array.isArray(fixes) && fixes.length > 0 ? fixes[0] : undefined;
+  if (isPlainObj(top)) {
+    const saves = top.saves_usd;
+    if (typeof top.name === "string") out.top_fix_name = top.name;
+    if (isFiniteNum(saves)) out.top_fix_saves_usd = saves;
+    const cost = top.cost_usd;
+    if (cost === null || cost === undefined) {
+      out.top_fix_cost_usd = PENDING_QUOTE;
+      out.grant_request = PENDING_QUOTE;
+      out.farmer_match = PENDING_QUOTE;
+    } else if (isFiniteNum(cost)) {
+      out.top_fix_cost_usd = cost;
+      out.grant_request = Math.round(Math.min(GRANT_SHARE * cost, GRANT_CAP_USD));
+      out.farmer_match = Math.round(cost) - out.grant_request;
+    }
+    const payback = top.payback_years;
+    if (isFiniteNum(payback)) out.top_fix_payback_years = payback;
+    else if (payback === null || payback === undefined) out.top_fix_payback_years = PENDING_QUOTE;
+    const price = record.price_per_gal;
+    if (isFiniteNum(saves) && isFiniteNum(price) && price > 0) {
+      out.gallons_saved = Math.round(saves / price);
+      out.carbon_tons_saved = Math.round(out.gallons_saved * CO2_KG_PER_GALLON / 1000 * 10) / 10;
+    }
   }
   return out;
 }
@@ -82,24 +112,37 @@ const fillCaseArb = fc
   .oneof(recordArb().map(flatten), placeholderFlatArb)
   .chain((flat) => templateArb(fillablePlaceholders(flat)).map((t) => ({ flat, ...t })));
 
-// Feature: grant-writer, Property 1: Top_Fix and grant split
+// Feature: grant-writer, Property 1: Top_Fix is fixes[0] and the grant split
 // **Validates: Requirements 3.3, 3.6**
-test("Property 1: Top_Fix is the earliest max saves_usd and the grant split adds up", () => {
+test("Property 1: Top_Fix is fixes[0]; the grant split adds up when cost is finite, else PENDING_QUOTE", () => {
   fc.assert(
     fc.property(recordArb({ fixes: "validNonEmpty" }), (record) => {
       const flat = flatten(record);
-      const max = Math.max(...record.fixes.map((f) => f.saves_usd));
-      const earliest = record.fixes[record.fixes.findIndex((f) => f.saves_usd === max)];
-
-      assert.ok(flat.top_fix_saves_usd === max, `top_fix_saves_usd ${flat.top_fix_saves_usd} != max ${max}`);
-      assert.ok(flat.top_fix_cost_usd === earliest.cost_usd, "Top_Fix is not the earliest max");
-      assert.equal(flat.top_fix_name, earliest.name);
-      assert.ok(flat.top_fix_payback_years === earliest.payback_years);
-      assert.ok(flat.grant_request <= GRANT_CAP_USD, `grant_request ${flat.grant_request} over cap`);
-      assert.ok(
-        flat.grant_request + flat.farmer_match === Math.round(flat.top_fix_cost_usd),
-        `${flat.grant_request} + ${flat.farmer_match} != round(${flat.top_fix_cost_usd})`
-      );
+      // Top_Fix is the first fix, not a max search.
+      const top = record.fixes[0];
+      assert.equal(flat.top_fix_name, top.name);
+      assert.ok(flat.top_fix_saves_usd === top.saves_usd,
+        `top_fix_saves_usd ${flat.top_fix_saves_usd} != fixes[0].saves_usd ${top.saves_usd}`);
+      // Cost group: cost null -> PENDING_QUOTE for cost, grant and match;
+      // cost finite -> the grant split adds up and respects the cap.
+      if (top.cost_usd === null || top.cost_usd === undefined) {
+        assert.equal(flat.top_fix_cost_usd, PENDING_QUOTE);
+        assert.equal(flat.grant_request, PENDING_QUOTE);
+        assert.equal(flat.farmer_match, PENDING_QUOTE);
+      } else {
+        assert.ok(flat.top_fix_cost_usd === top.cost_usd);
+        assert.ok(flat.grant_request <= GRANT_CAP_USD, `grant_request ${flat.grant_request} over cap`);
+        assert.ok(
+          flat.grant_request + flat.farmer_match === Math.round(flat.top_fix_cost_usd),
+          `${flat.grant_request} + ${flat.farmer_match} != round(${flat.top_fix_cost_usd})`
+        );
+      }
+      // Payback is independent of cost: null -> PENDING_QUOTE, else copied.
+      if (top.payback_years === null || top.payback_years === undefined) {
+        assert.equal(flat.top_fix_payback_years, PENDING_QUOTE);
+      } else {
+        assert.ok(flat.top_fix_payback_years === top.payback_years);
+      }
     }),
     RUNS
   );
@@ -110,7 +153,7 @@ test("Property 1: Top_Fix is the earliest max saves_usd and the grant split adds
 test("Property 2: flatten equals the Record plus the reference Derived_Fields", () => {
   fc.assert(
     fc.property(recordArb(), (record) => {
-      const expected = { ...record, ...referenceDerived(record) };
+      const expected = referenceFlat(record);
       assert.deepEqual(flatten(record), expected);
     }),
     { numRuns: 300 }

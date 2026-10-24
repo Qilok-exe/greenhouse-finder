@@ -1,7 +1,7 @@
 [
   {
     "id": "way/118883914",
-    "name": "Vervane Greenhouse",
+    "name": null,
     "lat": 42.328418,
     "lon": -72.532322,
     "sqft": 2906,
@@ -11,13 +11,19 @@
     "utility": "Eversource",
     "hdd": 6850,
     "price_per_gal": 3.66,
-    "estimate": { "low": 4500, "high": 6100, "point": 5287, "confidence": "medium", "method": "degree_day" },
+    "estimate": {
+      "low": { "gal": 805, "usd": 2945 },
+      "high": { "gal": 2724, "usd": 9969 },
+      "point": { "gal": 1444, "usd": 5287, "method": "Building size x UW-Madison calibrated rate, scaled for double_poly covering." },
+      "confidence": "wide",
+      "method": "From building size only. No site data yet."
+    },
     "fixes": [
-      { "name": "Thermal curtain", "saves_usd": 1850, "cost_usd": 9200, "payback_years": 5 },
-      { "name": "Seal end walls", "saves_usd": 420, "cost_usd": 600, "payback_years": 1.4 },
-      { "name": "Inflation blower for double poly", "saves_usd": 310, "cost_usd": 450, "payback_years": 1.5 }
+      { "name": "Thermal curtain", "saves_usd": 1322, "cost_usd": null, "payback_years": null, "method": "25% of winter fuel cost, applied on its own." },
+      { "name": "Night setback", "saves_usd": 634, "cost_usd": null, "payback_years": null, "method": "12% of winter fuel cost, applied on its own." },
+      { "name": "Seal gaps and end walls", "saves_usd": 529, "cost_usd": null, "payback_years": null, "method": "10% of winter fuel cost, applied on its own." }
     ],
-    "evidence": { "bill_uploaded": true, "quote_uploaded": true, "answers": { "heating_fuel": "propane", "owner_operated": true } }
+    "evidence": { "bill_uploaded": false, "quote_uploaded": true, "answers": {} }
   },
   {
     "id": "way/147156713",
@@ -31,11 +37,17 @@
     "utility": "Eversource",
     "hdd": 6850,
     "price_per_gal": 3.66,
-    "estimate": { "low": 38000, "high": 51000, "point": 44650, "confidence": "low", "method": "degree_day" },
+    "estimate": {
+      "low": { "gal": 10383, "usd": 38000 },
+      "high": { "gal": 13934, "usd": 51000 },
+      "point": { "gal": 12199, "usd": 44650, "method": "Building size x UW-Madison calibrated rate." },
+      "confidence": "low",
+      "method": "From building size only."
+    },
     "fixes": [
-      { "name": "Seal end walls", "saves_usd": 900, "cost_usd": 1500, "payback_years": 1.7 },
-      { "name": "Thermal curtain", "saves_usd": 7600, "cost_usd": 85000, "payback_years": 11.2 },
-      { "name": "Condensing unit heaters", "saves_usd": 7600, "cost_usd": 64000, "payback_years": 8.4 }
+      { "name": "Thermal curtain", "saves_usd": 7600, "cost_usd": 85000, "payback_years": 11.2, "method": "assessed measure" },
+      { "name": "Condensing unit heaters", "saves_usd": 7600, "cost_usd": 64000, "payback_years": 8.4, "method": "assessed measure" },
+      { "name": "Seal end walls", "saves_usd": 900, "cost_usd": 1500, "payback_years": 1.7, "method": "assessed measure" }
     ],
     "evidence": { "bill_uploaded": false, "quote_uploaded": false, "answers": { "heating_fuel": "propane", "owner_operated": false } }
   },
@@ -51,7 +63,13 @@
     "utility": "Eversource",
     "hdd": 6850,
     "price_per_gal": 3.66,
-    "estimate": { "low": 4600, "high": 6300, "point": 5420, "confidence": "medium", "method": "degree_day" },
+    "estimate": {
+      "low": { "gal": 1257, "usd": 4600 },
+      "high": { "gal": 1721, "usd": 6300 },
+      "point": { "gal": 1481, "usd": 5420, "method": "Building size x UW-Madison calibrated rate." },
+      "confidence": "medium",
+      "method": "From building size only."
+    },
     "fixes": [],
     "evidence": { "bill_uploaded": true, "quote_uploaded": false, "answers": { "heating_fuel": "propane", "owner_operated": true } }
   },
@@ -67,9 +85,15 @@
     "utility": "National Grid",
     "hdd": 6900,
     "price_per_gal": 0,
-    "estimate": { "low": 6100, "high": 8200, "point": 7155, "confidence": "low", "method": "degree_day" },
+    "estimate": {
+      "low": { "gal": 1667, "usd": 6100 },
+      "high": { "gal": 2240, "usd": 8200 },
+      "point": { "gal": 1955, "usd": 7155, "method": "Building size x UW-Madison calibrated rate." },
+      "confidence": "low",
+      "method": "From building size only."
+    },
     "fixes": [
-      { "name": "Thermal curtain", "saves_usd": 2500, "cost_usd": 12400, "payback_years": 5 }
+      { "name": "Thermal curtain", "saves_usd": 2500, "cost_usd": 12400, "payback_years": 5, "method": "assessed measure" }
     ],
     "evidence": { "bill_uploaded": false, "quote_uploaded": true, "answers": { "heating_fuel": "propane", "owner_operated": true } }
   },
@@ -85,10 +109,16 @@
     "utility": "Eversource",
     "hdd": 7400,
     "price_per_gal": 3.58,
-    "estimate": { "low": 3600, "high": 5000, "point": 4292, "confidence": "medium", "method": "degree_day" },
+    "estimate": {
+      "low": { "gal": 1006, "usd": 3600 },
+      "high": { "gal": 1397, "usd": 5000 },
+      "point": { "gal": 1199, "usd": 4292, "method": "Building size x UW-Madison calibrated rate." },
+      "confidence": "medium",
+      "method": "From building size only."
+    },
     "fixes": [
-      { "name": "Seal end walls", "saves_usd": 380, "cost_usd": 550, "payback_years": 1.4 },
-      { "name": "Thermal curtain", "saves_usd": 1500, "cost_usd": 7800, "payback_years": 5.2 }
+      { "name": "Thermal curtain", "saves_usd": 1500, "cost_usd": 7800, "payback_years": 5.2, "method": "assessed measure" },
+      { "name": "Seal end walls", "saves_usd": 380, "cost_usd": 550, "payback_years": 1.4, "method": "assessed measure" }
     ],
     "evidence": { "bill_uploaded": true, "quote_uploaded": false, "answers": { "heating_fuel": "propane", "owner_operated": true } }
   }

@@ -28,8 +28,10 @@ const money = fc.integer({ min: 0, max: 10000000 }).map((c) => c / 100);
 const fix = fc.record({
   name: text,
   saves_usd: money,
-  cost_usd: money,
-  payback_years: fc.double({ min: 0, max: 100, noNaN: true })
+  // Quote-dependent: a finite amount, or null when no vendor quote exists.
+  cost_usd: fc.oneof(money, fc.constant(null)),
+  payback_years: fc.oneof(fc.double({ min: 0, max: 100, noNaN: true }), fc.constant(null)),
+  method: text
 });
 
 const recordWithQuote = (quoteArb) =>
@@ -46,9 +48,9 @@ const recordWithQuote = (quoteArb) =>
     hdd: fc.integer({ min: 0, max: 15000 }),
     price_per_gal: fc.oneof(money, fc.constant(0), fc.constant(null)),
     estimate: fc.record({
-      low: money,
-      high: money,
-      point: money,
+      low: fc.record({ gal: money, usd: money }),
+      high: fc.record({ gal: money, usd: money }),
+      point: fc.record({ gal: money, usd: money, method: text }),
       confidence: text,
       method: text
     }),
