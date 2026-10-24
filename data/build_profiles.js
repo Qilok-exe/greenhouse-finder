@@ -12,6 +12,11 @@ const Calculator = require('../calculator.js');
 const SRC = path.join(__dirname, 'greenhouses_hampshire.json');
 const OUT = path.join(__dirname, 'profiles.json');
 const OUT_JS = path.join(__dirname, 'profiles.js');
+const TOWNS = path.join(__dirname, 'towns.json'); // written by add_towns.js
+
+// Town cache: { id: "Amherst" | null }. Missing file or id -> town stays null.
+const towns = fs.existsSync(TOWNS) ? JSON.parse(fs.readFileSync(TOWNS, 'utf8')) : {};
+if (!fs.existsSync(TOWNS)) console.warn('warning: data/towns.json not found; town left null (run add_towns.js)');
 
 // Defaults added to every record (existing fields are left untouched).
 const DEFAULTS = {
@@ -62,6 +67,7 @@ for (const rec of records) {
   kept.push({
     ...rec,
     ...DEFAULTS,
+    town: towns[rec.id] ?? null,
     estimate: Calculator.wideRange(rec.sqft),
     fixes: Calculator.rankedFixes(rec.usd_winter, rec.covering),
     evidence: { bill_uploaded: false, quote_uploaded: false, answers: {} },

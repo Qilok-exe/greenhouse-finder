@@ -31,7 +31,7 @@ window.PROFILES = [
         42.328375
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -112,7 +112,7 @@ window.PROFILES = [
         42.391838
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -193,7 +193,7 @@ window.PROFILES = [
         42.316581
       ]
     ],
-    "town": null,
+    "town": "Northampton",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -274,7 +274,7 @@ window.PROFILES = [
         42.404225
       ]
     ],
-    "town": null,
+    "town": "Chesterfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -403,7 +403,7 @@ window.PROFILES = [
         42.546061
       ]
     ],
-    "town": null,
+    "town": "Deerfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -484,7 +484,7 @@ window.PROFILES = [
         42.251642
       ]
     ],
-    "town": null,
+    "town": "Granby",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -565,7 +565,7 @@ window.PROFILES = [
         42.41084
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -646,7 +646,7 @@ window.PROFILES = [
         42.412385
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -727,7 +727,7 @@ window.PROFILES = [
         42.412861
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -808,7 +808,7 @@ window.PROFILES = [
         42.412675
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -889,7 +889,7 @@ window.PROFILES = [
         42.412766
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -970,7 +970,7 @@ window.PROFILES = [
         42.412356
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1051,7 +1051,7 @@ window.PROFILES = [
         42.412784
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1132,7 +1132,7 @@ window.PROFILES = [
         42.412415
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1221,7 +1221,7 @@ window.PROFILES = [
         42.412903
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1302,7 +1302,7 @@ window.PROFILES = [
         42.412504
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1383,7 +1383,7 @@ window.PROFILES = [
         42.412552
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1464,7 +1464,7 @@ window.PROFILES = [
         42.412662
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1545,7 +1545,7 @@ window.PROFILES = [
         42.412447
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1626,7 +1626,7 @@ window.PROFILES = [
         42.535124
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1707,7 +1707,7 @@ window.PROFILES = [
         42.535026
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1788,7 +1788,7 @@ window.PROFILES = [
         42.534928
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1869,7 +1869,7 @@ window.PROFILES = [
         42.534829
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -1950,7 +1950,7 @@ window.PROFILES = [
         42.534626
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -2031,7 +2031,7 @@ window.PROFILES = [
         42.53433
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -2112,7 +2112,7 @@ window.PROFILES = [
         42.534722
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -2193,7 +2193,7 @@ window.PROFILES = [
         42.534526
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -2274,7 +2274,7 @@ window.PROFILES = [
         42.534427
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -2355,7 +2355,7 @@ window.PROFILES = [
         42.431877
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -2436,7 +2436,7 @@ window.PROFILES = [
         42.431694
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -2517,7 +2517,7 @@ window.PROFILES = [
         42.432092
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -2598,7 +2598,7 @@ window.PROFILES = [
         42.431711
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -2847,7 +2847,7 @@ window.PROFILES = [
         42.443607
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -2928,7 +2928,7 @@ window.PROFILES = [
         42.460213
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3009,7 +3009,7 @@ window.PROFILES = [
         42.460283
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3090,7 +3090,7 @@ window.PROFILES = [
         42.460352
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3171,7 +3171,7 @@ window.PROFILES = [
         42.460145
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3252,7 +3252,7 @@ window.PROFILES = [
         42.459881
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3333,7 +3333,7 @@ window.PROFILES = [
         42.460026
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3414,7 +3414,7 @@ window.PROFILES = [
         42.460098
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3495,7 +3495,7 @@ window.PROFILES = [
         42.460239
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3576,7 +3576,7 @@ window.PROFILES = [
         42.460375
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3657,7 +3657,7 @@ window.PROFILES = [
         42.459744
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3738,7 +3738,7 @@ window.PROFILES = [
         42.459815
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3819,7 +3819,7 @@ window.PROFILES = [
         42.459955
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3900,7 +3900,7 @@ window.PROFILES = [
         42.459696
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -3981,7 +3981,7 @@ window.PROFILES = [
         42.460169
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4062,7 +4062,7 @@ window.PROFILES = [
         42.459766
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4143,7 +4143,7 @@ window.PROFILES = [
         42.459908
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4224,7 +4224,7 @@ window.PROFILES = [
         42.460308
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4305,7 +4305,7 @@ window.PROFILES = [
         42.460049
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4386,7 +4386,7 @@ window.PROFILES = [
         42.460123
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4467,7 +4467,7 @@ window.PROFILES = [
         42.460191
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4548,7 +4548,7 @@ window.PROFILES = [
         42.460336
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4629,7 +4629,7 @@ window.PROFILES = [
         42.459838
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4710,7 +4710,7 @@ window.PROFILES = [
         42.459981
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4791,7 +4791,7 @@ window.PROFILES = [
         42.459722
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4872,7 +4872,7 @@ window.PROFILES = [
         42.459795
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -4953,7 +4953,7 @@ window.PROFILES = [
         42.460263
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5034,7 +5034,7 @@ window.PROFILES = [
         42.459936
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5115,7 +5115,7 @@ window.PROFILES = [
         42.460008
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5196,7 +5196,7 @@ window.PROFILES = [
         42.459656
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5277,7 +5277,7 @@ window.PROFILES = [
         42.459863
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5358,7 +5358,7 @@ window.PROFILES = [
         42.460078
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5439,7 +5439,7 @@ window.PROFILES = [
         42.460149
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5520,7 +5520,7 @@ window.PROFILES = [
         42.460216
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5601,7 +5601,7 @@ window.PROFILES = [
         42.460289
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5682,7 +5682,7 @@ window.PROFILES = [
         42.459679
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5763,7 +5763,7 @@ window.PROFILES = [
         42.459748
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5844,7 +5844,7 @@ window.PROFILES = [
         42.459818
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -5925,7 +5925,7 @@ window.PROFILES = [
         42.459887
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6006,7 +6006,7 @@ window.PROFILES = [
         42.460099
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6087,7 +6087,7 @@ window.PROFILES = [
         42.459607
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6168,7 +6168,7 @@ window.PROFILES = [
         42.459957
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6249,7 +6249,7 @@ window.PROFILES = [
         42.460027
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6330,7 +6330,7 @@ window.PROFILES = [
         42.460171
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6411,7 +6411,7 @@ window.PROFILES = [
         42.459558
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6492,7 +6492,7 @@ window.PROFILES = [
         42.45963
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6573,7 +6573,7 @@ window.PROFILES = [
         42.45977
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6654,7 +6654,7 @@ window.PROFILES = [
         42.459843
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6735,7 +6735,7 @@ window.PROFILES = [
         42.459699
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6832,7 +6832,7 @@ window.PROFILES = [
         42.178611
       ]
     ],
-    "town": null,
+    "town": "Ludlow",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -6921,7 +6921,7 @@ window.PROFILES = [
         42.178696
       ]
     ],
-    "town": null,
+    "town": "Ludlow",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7002,7 +7002,7 @@ window.PROFILES = [
         42.178337
       ]
     ],
-    "town": null,
+    "town": "Ludlow",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7083,7 +7083,7 @@ window.PROFILES = [
         42.178783
       ]
     ],
-    "town": null,
+    "town": "Ludlow",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7164,7 +7164,7 @@ window.PROFILES = [
         42.445882
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7245,7 +7245,7 @@ window.PROFILES = [
         42.445984
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7326,7 +7326,7 @@ window.PROFILES = [
         42.455047
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7407,7 +7407,7 @@ window.PROFILES = [
         42.4552
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7488,7 +7488,7 @@ window.PROFILES = [
         42.455166
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7569,7 +7569,7 @@ window.PROFILES = [
         42.369975
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7650,7 +7650,7 @@ window.PROFILES = [
         42.369956
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7731,7 +7731,7 @@ window.PROFILES = [
         42.4078
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7812,7 +7812,7 @@ window.PROFILES = [
         42.407254
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7893,7 +7893,7 @@ window.PROFILES = [
         42.406915
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -7974,7 +7974,7 @@ window.PROFILES = [
         42.407349
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8055,7 +8055,7 @@ window.PROFILES = [
         42.407046
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8136,7 +8136,7 @@ window.PROFILES = [
         42.407211
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8217,7 +8217,7 @@ window.PROFILES = [
         42.401303
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8298,7 +8298,7 @@ window.PROFILES = [
         42.401285
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8379,7 +8379,7 @@ window.PROFILES = [
         42.35619
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8460,7 +8460,7 @@ window.PROFILES = [
         42.402493
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8541,7 +8541,7 @@ window.PROFILES = [
         42.362288
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8622,7 +8622,7 @@ window.PROFILES = [
         42.362194
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8703,7 +8703,7 @@ window.PROFILES = [
         42.362097
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8784,7 +8784,7 @@ window.PROFILES = [
         42.411456
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8865,7 +8865,7 @@ window.PROFILES = [
         42.320583
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -8946,7 +8946,7 @@ window.PROFILES = [
         42.320562
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9059,7 +9059,7 @@ window.PROFILES = [
         42.444112
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9140,7 +9140,7 @@ window.PROFILES = [
         42.364302
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9221,7 +9221,7 @@ window.PROFILES = [
         42.339885
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9302,7 +9302,7 @@ window.PROFILES = [
         42.339889
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9383,7 +9383,7 @@ window.PROFILES = [
         42.339895
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9464,7 +9464,7 @@ window.PROFILES = [
         42.339901
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9545,7 +9545,7 @@ window.PROFILES = [
         42.339905
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9626,7 +9626,7 @@ window.PROFILES = [
         42.339978
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9707,7 +9707,7 @@ window.PROFILES = [
         42.340314
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9788,7 +9788,7 @@ window.PROFILES = [
         42.339414
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9869,7 +9869,7 @@ window.PROFILES = [
         42.378611
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -9950,7 +9950,7 @@ window.PROFILES = [
         42.411839
       ]
     ],
-    "town": null,
+    "town": "Worthington",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10031,7 +10031,7 @@ window.PROFILES = [
         42.411787
       ]
     ],
-    "town": null,
+    "town": "Worthington",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10112,7 +10112,7 @@ window.PROFILES = [
         42.411665
       ]
     ],
-    "town": null,
+    "town": "Worthington",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10193,7 +10193,7 @@ window.PROFILES = [
         42.411713
       ]
     ],
-    "town": null,
+    "town": "Worthington",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10274,7 +10274,7 @@ window.PROFILES = [
         42.286307
       ]
     ],
-    "town": null,
+    "town": "Westhampton",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10355,7 +10355,7 @@ window.PROFILES = [
         42.187876
       ]
     ],
-    "town": null,
+    "town": "Westfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10436,7 +10436,7 @@ window.PROFILES = [
         42.187615
       ]
     ],
-    "town": null,
+    "town": "Westfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10517,7 +10517,7 @@ window.PROFILES = [
         42.187637
       ]
     ],
-    "town": null,
+    "town": "Westfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10598,7 +10598,7 @@ window.PROFILES = [
         42.383527
       ]
     ],
-    "town": null,
+    "town": "Williamsburg",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10679,7 +10679,7 @@ window.PROFILES = [
         42.544315
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10760,7 +10760,7 @@ window.PROFILES = [
         42.535343
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10841,7 +10841,7 @@ window.PROFILES = [
         42.535243
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -10922,7 +10922,7 @@ window.PROFILES = [
         42.535146
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11003,7 +11003,7 @@ window.PROFILES = [
         42.535046
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11084,7 +11084,7 @@ window.PROFILES = [
         42.534948
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11165,7 +11165,7 @@ window.PROFILES = [
         42.534845
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11246,7 +11246,7 @@ window.PROFILES = [
         42.534744
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11327,7 +11327,7 @@ window.PROFILES = [
         42.534647
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11408,7 +11408,7 @@ window.PROFILES = [
         42.534548
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11489,7 +11489,7 @@ window.PROFILES = [
         42.534446
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11570,7 +11570,7 @@ window.PROFILES = [
         42.534349
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11651,7 +11651,7 @@ window.PROFILES = [
         42.534248
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11732,7 +11732,7 @@ window.PROFILES = [
         42.534148
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11813,7 +11813,7 @@ window.PROFILES = [
         42.534047
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11894,7 +11894,7 @@ window.PROFILES = [
         42.534086
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -11975,7 +11975,7 @@ window.PROFILES = [
         42.534194
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12056,7 +12056,7 @@ window.PROFILES = [
         42.534301
       ]
     ],
-    "town": null,
+    "town": "Montague",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12137,7 +12137,7 @@ window.PROFILES = [
         42.445809
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12218,7 +12218,7 @@ window.PROFILES = [
         42.445485
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12299,7 +12299,7 @@ window.PROFILES = [
         42.461498
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12380,7 +12380,7 @@ window.PROFILES = [
         42.454782
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12461,7 +12461,7 @@ window.PROFILES = [
         42.455334
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12542,7 +12542,7 @@ window.PROFILES = [
         42.411045
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12623,7 +12623,7 @@ window.PROFILES = [
         42.446004
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12704,7 +12704,7 @@ window.PROFILES = [
         42.445994
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12785,7 +12785,7 @@ window.PROFILES = [
         42.445676
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12866,7 +12866,7 @@ window.PROFILES = [
         42.445394
       ]
     ],
-    "town": null,
+    "town": "Sunderland",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -12947,7 +12947,7 @@ window.PROFILES = [
         42.407837
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13028,7 +13028,7 @@ window.PROFILES = [
         42.407712
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13109,7 +13109,7 @@ window.PROFILES = [
         42.407744
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13190,7 +13190,7 @@ window.PROFILES = [
         42.407854
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13271,7 +13271,7 @@ window.PROFILES = [
         42.407892
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13352,7 +13352,7 @@ window.PROFILES = [
         42.407981
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13433,7 +13433,7 @@ window.PROFILES = [
         42.407994
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13514,7 +13514,7 @@ window.PROFILES = [
         42.407882
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13595,7 +13595,7 @@ window.PROFILES = [
         42.407857
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13676,7 +13676,7 @@ window.PROFILES = [
         42.407771
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13757,7 +13757,7 @@ window.PROFILES = [
         42.401322
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13838,7 +13838,7 @@ window.PROFILES = [
         42.403398
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -13919,7 +13919,7 @@ window.PROFILES = [
         42.450037
       ]
     ],
-    "town": null,
+    "town": "Shutesbury",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14000,7 +14000,7 @@ window.PROFILES = [
         42.146706
       ]
     ],
-    "town": null,
+    "town": "Westfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14097,7 +14097,7 @@ window.PROFILES = [
         42.156805
       ]
     ],
-    "town": null,
+    "town": "Springfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14178,7 +14178,7 @@ window.PROFILES = [
         42.339499
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14259,7 +14259,7 @@ window.PROFILES = [
         42.415436
       ]
     ],
-    "town": null,
+    "town": "Chesterfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14340,7 +14340,7 @@ window.PROFILES = [
         42.520709
       ]
     ],
-    "town": null,
+    "town": "Ashfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14421,7 +14421,7 @@ window.PROFILES = [
         42.520858
       ]
     ],
-    "town": null,
+    "town": "Ashfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14502,7 +14502,7 @@ window.PROFILES = [
         42.491673
       ]
     ],
-    "town": null,
+    "town": "Ashfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14583,7 +14583,7 @@ window.PROFILES = [
         42.545253
       ]
     ],
-    "town": null,
+    "town": "Ashfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14664,7 +14664,7 @@ window.PROFILES = [
         42.517376
       ]
     ],
-    "town": null,
+    "town": "Plainfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14745,7 +14745,7 @@ window.PROFILES = [
         42.51718
       ]
     ],
-    "town": null,
+    "town": "Plainfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14826,7 +14826,7 @@ window.PROFILES = [
         42.517034
       ]
     ],
-    "town": null,
+    "town": "Plainfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14907,7 +14907,7 @@ window.PROFILES = [
         42.357365
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -14988,7 +14988,7 @@ window.PROFILES = [
         42.357487
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15069,7 +15069,7 @@ window.PROFILES = [
         42.357544
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15154,7 +15154,7 @@ window.PROFILES = [
         42.324738
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15235,7 +15235,7 @@ window.PROFILES = [
         42.388056
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15316,7 +15316,7 @@ window.PROFILES = [
         42.388177
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15397,7 +15397,7 @@ window.PROFILES = [
         42.343251
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15478,7 +15478,7 @@ window.PROFILES = [
         42.347609
       ]
     ],
-    "town": null,
+    "town": "Hadley",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15567,7 +15567,7 @@ window.PROFILES = [
         42.527155
       ]
     ],
-    "town": null,
+    "town": "Deerfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15648,7 +15648,7 @@ window.PROFILES = [
         42.26764
       ]
     ],
-    "town": null,
+    "town": "Easthampton",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15729,7 +15729,7 @@ window.PROFILES = [
         42.37104
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15810,7 +15810,7 @@ window.PROFILES = [
         42.370902
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15891,7 +15891,7 @@ window.PROFILES = [
         42.370781
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -15972,7 +15972,7 @@ window.PROFILES = [
         42.371334
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16053,7 +16053,7 @@ window.PROFILES = [
         42.384534
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16134,7 +16134,7 @@ window.PROFILES = [
         42.384466
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16215,7 +16215,7 @@ window.PROFILES = [
         42.384389
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16296,7 +16296,7 @@ window.PROFILES = [
         42.371452
       ]
     ],
-    "town": null,
+    "town": "Hatfield",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16401,7 +16401,7 @@ window.PROFILES = [
         42.428639
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16482,7 +16482,7 @@ window.PROFILES = [
         42.42409
       ]
     ],
-    "town": null,
+    "town": "Whately",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16563,7 +16563,7 @@ window.PROFILES = [
         42.407984
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16644,7 +16644,7 @@ window.PROFILES = [
         42.408039
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16725,7 +16725,7 @@ window.PROFILES = [
         42.407507
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16806,7 +16806,7 @@ window.PROFILES = [
         42.407644
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16887,7 +16887,7 @@ window.PROFILES = [
         42.407547
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -16968,7 +16968,7 @@ window.PROFILES = [
         42.407427
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17049,7 +17049,7 @@ window.PROFILES = [
         42.407303
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17130,7 +17130,7 @@ window.PROFILES = [
         42.407179
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17211,7 +17211,7 @@ window.PROFILES = [
         42.407096
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17292,7 +17292,7 @@ window.PROFILES = [
         42.407215
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17373,7 +17373,7 @@ window.PROFILES = [
         42.407338
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17454,7 +17454,7 @@ window.PROFILES = [
         42.407464
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17535,7 +17535,7 @@ window.PROFILES = [
         42.407589
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17616,7 +17616,7 @@ window.PROFILES = [
         42.41071
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17697,7 +17697,7 @@ window.PROFILES = [
         42.410725
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17778,7 +17778,7 @@ window.PROFILES = [
         42.4101
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,
@@ -17859,7 +17859,7 @@ window.PROFILES = [
         42.410085
       ]
     ],
-    "town": null,
+    "town": "Amherst",
     "utility": null,
     "hdd": 6000,
     "price_per_gal": 3.66,

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greenhouse finder — Hampshire County</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="calculator.js"></script>
+<script src="data/profiles.js"></script>
+<style>
+  :root {
+    /* One sequential ramp, pale to dark (ColorBrewer YlOrBr-5). No red/green pairing. */
+    --band-0: #ffffd4;
+    --band-1: #fed98e;
+    --band-2: #fe9929;
+    --band-3: #d95f0e;
+    --band-4: #993404;
+    --ink: #1f1a17;
+    --muted: #5c534d;
+    --line: #e4ddd6;
+    --bg: #faf8f5;
+    --panel-w: 420px;
+    --bar-ms: 900ms;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :root { --bar-ms: 150ms; }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+  }
+
+  /* Header: figures on one line, finder on its own row beneath, right-aligned */
+  header {
+    padding: .75rem 1.5rem .6rem;
+    border-bottom: 1px solid var(--line);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+  header h1 .sep { color: var(--band-2); padding: 0 .4em; }
+  /* The dollar figure is the largest element in the header. */
+  header h1 .usd {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--band-4);
+    font-variant-numeric: tabular-nums;
+  }
+  .finder {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  header label { font-size: .9rem; color: var(--muted); }
+  header select { font: inherit; font-size: .95rem; padding: .3rem .4rem; max-width: 22rem; }
+  @media (max-width: 1100px) {
+    header h1 { white-space: normal; }
+  }
+
+  /* Layout */
+  main {
+    display: grid;
+    grid-template-columns: 1fr var(--panel-w);
+    min-height: 0;
+  }
+  #map { min-height: 60vh; height: 100%; }
+  aside {
+    border-left: 1px solid var(--line);
+    background: #fff;
+    overflow-y: auto;
+    padding: 1.25rem 1.5rem 2rem;
+  }
+  @media (max-width: 860px) {
+    body { height: auto; }
+    main { grid-template-columns: 1fr; }
+    #map { height: 60vh; }
+    aside { border-left: 0; border-top: 1px solid var(--line); }
+  }
+
+  /* Panel */
+  .placeholder { color: var(--muted); font-size: 1.05rem; }
+  .panel h2 { margin: 0 0 .25rem; font-size: 1.5rem; }
+  .panel h2:focus { outline: none; }
+  .meta { margin: 0 0 1.25rem; color: var(--muted); }
+  .panel h3 {
+    margin: 1.75rem 0 .5rem;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+  }
+
+  /* Range bar — the biggest element in the panel */
+  .range { margin: .5rem 0 0; }
+  .range-chip {
+    display: inline-block;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: .15rem .55rem;
+    border-radius: 999px;
+    background: var(--band-1);
+    color: var(--ink);
+  }
+  .range-chip.narrowed { background: var(--band-4); color: #fff; }
+  .range-figures {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -.01em;
+    margin: .35rem 0 .75rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .range-figures .dash { color: var(--muted); font-weight: 400; padding: 0 .15em; }
+  .range-track {
+    position: relative;
+    height: 56px;
+    border-radius: 10px;
+    background: #f1ece6;
+    overflow: hidden;
+  }
+  .range-ghost, .range-fill, .range-point {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    transition:
+      left var(--bar-ms) cubic-bezier(.22, .8, .25, 1),
+      width var(--bar-ms) cubic-bezier(.22, .8, .25, 1),
+      opacity var(--bar-ms) ease;
+  }
+  .range-ghost {
+    background: repeating-linear-gradient(135deg, var(--band-1) 0 6px, transparent 6px 12px);
+    opacity: 0;
+  }
+  .range-ghost.show { opacity: .9; }
+  .range-fill {
+    background: linear-gradient(90deg, var(--band-2), var(--band-4));
+    border-radius: 10px;
+    min-width: 10px;
+  }
+  .range-point {
+    width: 4px;
+    margin-left: -2px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+  .no-anim, .no-anim * { transition: none !important; }
+  .range-axis {
+    display: flex;
+    justify-content: space-between;
+    font-size: .8rem;
+    color: var(--muted);
+    margin-top: .3rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .range-best { margin: .6rem 0 0; font-size: 1rem; }
+  .range-best strong { font-variant-numeric: tabular-nums; }
+  .method { margin: .4rem 0 0; color: var(--muted); font-size: .9rem; line-height: 1.45; }
+
+  /* Calibration form */
+  form.calibrate { display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-end; }
+  form.calibrate label { flex: 1 1 100%; font-weight: 600; }
+  form.calibrate input {
+    font: inherit;
+    font-size: 1.1rem;
+    padding: .45rem .6rem;
+    width: 10rem;
+    border: 1px solid #b9aea4;
+    border-radius: 6px;
+  }
+  button {
+    font: inherit;
+    padding: .5rem .9rem;
+    border-radius: 6px;
+    border: 1px solid var(--band-4);
+    background: var(--band-4);
+    color: #fff;
+    cursor: pointer;
+  }
+  button.secondary { background: #fff; color: var(--band-4); }
+  button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 3px solid var(--band-2);
+    outline-offset: 2px;
+  }
+  .error { color: #8a1c00; margin: .4rem 0 0; font-size: .9rem; }
+
+  /* Fixes and assumptions */
+  ol.fixes { margin: 0; padding-left: 1.25rem; }
+  ol.fixes li { padding: .35rem 0; border-bottom: 1px solid var(--line); }
+  ol.fixes .saves { float: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+  dl.assumptions { display: grid; grid-template-columns: auto 1fr; gap: .3rem 1rem; margin: 0; }
+  dl.assumptions dt { color: var(--muted); }
+  dl.assumptions dd { margin: 0; }
+
+  #agent-output { margin-top: 1.75rem; }
+
+  /* Legend */
+  .legend {
+    background: #fff;
+    padding: .6rem .75rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
+    font-size: .85rem;
+    line-height: 1.5;
+  }
+  .legend strong { display: block; margin-bottom: .25rem; }
+  .legend .row { display: flex; align-items: center; gap: .5rem; }
+  .legend .sw {
+    width: 18px; height: 14px;
+    border: 1px solid rgba(0,0,0,.35);
+    flex: none;
+  }
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="headline">Loading greenhouses…</h1>
+  <div class="finder">
+    <label for="jump">Find a greenhouse</label>
+    <select id="jump"><option value="">Choose…</option></select>
+  </div>
+</header>
+
+<main>
+  <div id="map" role="region" aria-label="Map of greenhouses"></div>
+  <aside aria-label="Selected greenhouse">
+    <div id="panel" class="panel">
+      <p class="placeholder">Click a greenhouse on the map to see its winter fuel estimate.</p>
+    </div>
+    <div id="agent-output"></div>
+  </aside>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var PROFILES = window.PROFILES;
+  var Calc = window.Calculator;
+  var headline = document.getElementById('headline');
+
+  if (!Array.isArray(PROFILES) || !Calc) {
+    headline.textContent = 'Could not load data/profiles.js or calculator.js.';
+    return;
+  }
+
+  // ---------- formatting ----------
+  var usdFmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  var intFmt = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+  function usd(n) { return usdFmt.format(n); }
+  function int(n) { return intFmt.format(n); }
+
+  // Tiny DOM helper. Text always goes in via textContent, never innerHTML.
+  function h(tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      for (var k in attrs) {
+        if (k === 'text') node.textContent = attrs[k];
+        else if (k === 'class') node.className = attrs[k];
+        else node.setAttribute(k, attrs[k]);
+      }
+    }
+    (children || []).forEach(function (c) { if (c) node.appendChild(c); });
+    return node;
+  }
+
+  // ---------- header (computed from the data) ----------
+  var totalSqft = 0, totalUsd = 0;
+  PROFILES.forEach(function (r) { totalSqft += r.sqft; totalUsd += r.usd_winter; });
+  headline.textContent = '';
+  headline.appendChild(document.createTextNode(int(PROFILES.length) + ' greenhouses'));
+  headline.appendChild(h('span', { class: 'sep', 'aria-hidden': 'true', text: '·' }));
+  headline.appendChild(document.createTextNode(int(totalSqft) + ' sq ft under cover'));
+  headline.appendChild(h('span', { class: 'sep', 'aria-hidden': 'true', text: '·' }));
+  headline.appendChild(document.createTextNode('an estimated '));
+  headline.appendChild(h('span', { class: 'usd', text: usd(totalUsd) }));
+  headline.appendChild(document.createTextNode(' burned this winter'));
+
+  // ---------- colour bands (fixed breaks on usd_winter) ----------
+  var BANDS = [
+    { max: 3000,     color: getVar('--band-0'), label: 'Under $3,000' },
+    { max: 5000,     color: getVar('--band-1'), label: '$3,000 – $5,000' },
+    { max: 10000,    color: getVar('--band-2'), label: '$5,000 – $10,000' },
+    { max: 25000,    color: getVar('--band-3'), label: '$10,000 – $25,000' },
+    { max: Infinity, color: getVar('--band-4'), label: '$25,000 and over' }
+  ];
+  function getVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function bandColor(v) {
+    for (var i = 0; i < BANDS.length; i++) if (v < BANDS[i].max) return BANDS[i].color;
+    return BANDS[BANDS.length - 1].color;
+  }
+
+  // ---------- map ----------
+  var map = L.map('map', { preferCanvas: false });
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  var polygons = L.featureGroup().addTo(map);
+  var dots = L.featureGroup();            // shown when zoomed out: buildings are sub-pixel there
+  var DOT_ZOOM = 15;
+  var layerById = {};
+  var selectedId = null;
+
+  function baseStyle(r) {
+    return { color: '#3d2a1e', weight: 1, fillColor: bandColor(r.usd_winter), fillOpacity: 0.9 };
+  }
+
+  PROFILES.forEach(function (r) {
+    // ring is [lon, lat]; Leaflet wants [lat, lon].
+    var latlngs = r.ring.map(function (p) { return [p[1], p[0]]; });
+    var poly = L.polygon(latlngs, baseStyle(r)).addTo(polygons);
+    var dot = L.circleMarker([r.lat, r.lon], {
+      radius: 6, color: '#3d2a1e', weight: 1, fillColor: bandColor(r.usd_winter), fillOpacity: 0.95
+    }).addTo(dots);
+    var tip = (r.name || 'Unnamed greenhouse') + ' — ' + usd(r.usd_winter);
+    poly.bindTooltip(tip, { sticky: true });
+    dot.bindTooltip(tip);
+    poly.on('click', function () { select(r); });
+    dot.on('click', function () { select(r); });
+    layerById[r.id] = poly;
+  });
+
+  // Sanity check on the axis swap: the first polygon should sit on its record's lat/lon.
+  (function () {
+    var r = PROFILES[0], c = layerById[r.id].getBounds().getCenter();
+    if (Math.abs(c.lat - r.lat) > 0.01 || Math.abs(c.lng - r.lon) > 0.01) {
+      console.error('ring coordinates look swapped', c, r.lat, r.lon);
+    }
+  })();
+
+  map.fitBounds(polygons.getBounds(), { padding: [20, 20] });
+
+  function syncDots() {
+    if (map.getZoom() < DOT_ZOOM) { if (!map.hasLayer(dots)) dots.addTo(map); }
+    else if (map.hasLayer(dots)) map.removeLayer(dots);
+  }
+  map.on('zoomend', syncDots);
+  syncDots();
+
+  // Legend
+  var legend = L.control({ position: 'bottomright' });
+  legend.onAdd = function () {
+    var box = h('div', { class: 'legend' }, [h('strong', { text: 'Fuel cost this winter' })]);
+    BANDS.forEach(function (b) {
+      var sw = h('span', { class: 'sw', 'aria-hidden': 'true' });
+      sw.style.background = b.color;
+      box.appendChild(h('div', { class: 'row' }, [sw, h('span', { text: b.label })]));
+    });
+    return box;
+  };
+  legend.addTo(map);
+
+  // Keyboard-accessible route to every greenhouse (map polygons are mouse-only).
+  var jump = document.getElementById('jump');
+  PROFILES.slice()
+    .sort(function (a, b) { return b.usd_winter - a.usd_winter; })
+    .forEach(function (r) {
+      jump.appendChild(h('option', {
+        value: r.id,
+        text: (r.name || 'Unnamed greenhouse') + ' — ' + int(r.sqft) + ' sq ft, ' + usd(r.usd_winter)
+      }));
+    });
+  jump.addEventListener('change', function () {
+    var r = PROFILES.find(function (x) { return x.id === jump.value; });
+    if (r) {
+      map.flyToBounds(layerById[r.id].getBounds(), { maxZoom: 18, duration: 0.8 });
+      select(r);
+    }
+  });
+
+  // ---------- range bar ----------
+  // Rounds up to 1, 2, 2.5 or 5 × 10^k so the axis end label is a clean figure.
+  function niceMax(v) {
+    var p = Math.pow(10, Math.floor(Math.log10(v)));
+    var steps = [1, 2, 2.5, 5, 10];
+    for (var i = 0; i < steps.length; i++) if (steps[i] * p >= v) return steps[i] * p;
+    return 10 * p;
+  }
+
+  // Counts a number from one value to another in sync with the bar transition.
+  function tween(node, from, to, ms) {
+    if (node._raf) cancelAnimationFrame(node._raf);
+    if (from === to || ms <= 0) { node.textContent = usd(to); return; }
+    var t0 = performance.now();
+    function frame(t) {
+      var k = Math.min(1, (t - t0) / ms);
+      var e = 1 - Math.pow(1 - k, 3);
+      node.textContent = usd(Math.round(from + (to - from) * e));
+      if (k < 1) node._raf = requestAnimationFrame(frame);
+    }
+    node._raf = requestAnimationFrame(frame);
+  }
+
+  function barMs() {
+    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bar-ms')) || 0;
+  }
+
+  function RangeBar(wide) {
+    this.wide = wide;
+    this.shown = null;
+    this.chip = h('span', { class: 'range-chip' });
+    this.lowEl = h('span');
+    this.highEl = h('span');
+    this.figures = h('div', { class: 'range-figures' },
+      [this.lowEl, h('span', { class: 'dash', 'aria-hidden': 'true', text: '–' }), this.highEl]);
+    this.ghost = h('div', { class: 'range-ghost' });
+    this.fill = h('div', { class: 'range-fill' });
+    this.point = h('div', { class: 'range-point' });
+    this.track = h('div', { class: 'range-track', role: 'img' }, [this.ghost, this.fill, this.point]);
+    this.axisMin = h('span', { text: usd(0) });
+    this.axisMax = h('span');
+    this.bestEl = h('strong');
+    this.best = h('p', { class: 'range-best' }, [document.createTextNode('Best estimate '), this.bestEl]);
+    this.methodEl = h('p', { class: 'method' });
+    this.pointMethodEl = h('p', { class: 'method' });
+    this.root = h('div', { class: 'range' }, [
+      this.chip, this.figures, this.track,
+      h('div', { class: 'range-axis', 'aria-hidden': 'true' }, [this.axisMin, this.axisMax]),
+      this.best, this.methodEl, this.pointMethodEl
+    ]);
+  }
+
+  RangeBar.prototype.show = function (est, animate) {
+    var narrowed = est !== this.wide;
+    var max = niceMax(Math.max(this.wide.high.usd, est.high.usd) * 1.05);
+    function pct(v) { return (v / max * 100) + '%'; }
+
+    if (!animate) this.root.classList.add('no-anim');
+
+    this.fill.style.left = pct(est.low.usd);
+    this.fill.style.width = pct(est.high.usd - est.low.usd);
+    this.point.style.left = pct(est.point.usd);
+    this.ghost.style.left = pct(this.wide.low.usd);
+    this.ghost.style.width = pct(this.wide.high.usd - this.wide.low.usd);
+    this.ghost.classList.toggle('show', narrowed);
+    this.axisMax.textContent = usd(max);
+
+    var ms = animate ? barMs() : 0;
+    var prev = this.shown || est;
+    tween(this.lowEl, prev.low.usd, est.low.usd, ms);
+    tween(this.highEl, prev.high.usd, est.high.usd, ms);
+    tween(this.bestEl, prev.point.usd, est.point.usd, ms);
+
+    this.chip.textContent = narrowed ? 'Narrowed by your fuel use' : 'Wide range';
+    this.chip.classList.toggle('narrowed', narrowed);
+    // estimate.method is shown only when it adds something beyond point.method.
+    this.methodEl.textContent = est.method !== est.point.method ? est.method : '';
+    this.methodEl.hidden = !this.methodEl.textContent;
+    this.pointMethodEl.textContent = est.point.method;
+    this.track.setAttribute('aria-label',
+      'Estimated winter fuel cost between ' + usd(est.low.usd) + ' and ' + usd(est.high.usd) +
+      ', best estimate ' + usd(est.point.usd));
+
+    if (!animate) {
+      void this.root.offsetWidth;          // commit positions before re-enabling transitions
+      this.root.classList.remove('no-anim');
+    }
+    this.shown = est;
+  };
+
+  // ---------- panel ----------
+  var panel = document.getElementById('panel');
+
+  function select(r) {
+    if (selectedId && layerById[selectedId]) {
+      var prevRec = PROFILES.find(function (x) { return x.id === selectedId; });
+      layerById[selectedId].setStyle(baseStyle(prevRec));
+    }
+    selectedId = r.id;
+    layerById[r.id].setStyle({ color: '#000', weight: 3 }).bringToFront();
+    if (jump.value !== r.id) jump.value = r.id;
+
+    renderPanel(r);
+    if (window.AgentView) AgentView.render(r);
+  }
+
+  function renderPanel(r) {
+    panel.textContent = '';
+
+    // "Name · Town", or "Unnamed greenhouse · Town"; town omitted if missing.
+    var titleText = (r.name || 'Unnamed greenhouse') + (r.town ? ' · ' + r.town : '');
+    var title = h('h2', { tabindex: '-1', text: titleText });
+    panel.appendChild(title);
+    panel.appendChild(h('p', { class: 'meta', text: int(r.sqft) + ' sq ft · ' + r.covering }));
+
+    // Range bar
+    var bar = new RangeBar(r.estimate);
+    panel.appendChild(bar.root);
+    bar.show(r.estimate, false);
+
+    // Calibration
+    panel.appendChild(h('h3', { text: 'Narrow it down' }));
+    var inputId = 'gallons-' + r.id.replace(/[^a-z0-9]/gi, '-');
+    var input = h('input', { id: inputId, type: 'number', inputmode: 'decimal', min: '0', step: 'any' });
+    var submit = h('button', { type: 'submit', text: 'Narrow the estimate' });
+    var reset = h('button', { type: 'button', class: 'secondary', text: 'Reset' });
+    var err = h('p', { class: 'error', role: 'alert' });
+    err.hidden = true;
+    var form = h('form', { class: 'calibrate' }, [
+      h('label', { for: inputId, text: 'Gallons burned last winter' }), input, submit, reset
+    ]);
+    panel.appendChild(form);
+    panel.appendChild(err);
+
+    function apply() {
+      err.hidden = true;
+      var raw = input.value.trim();
+      if (raw === '') { bar.show(r.estimate, true); return; }
+      var gallons = Number(raw);
+      try {
+        bar.show(Calc.calibrate(r, gallons), true);
+      } catch (e) {
+        err.textContent = 'Enter a number of gallons, zero or more.';
+        err.hidden = false;
+      }
+    }
+    form.addEventListener('submit', function (e) { e.preventDefault(); apply(); });
+    input.addEventListener('change', apply);
+    reset.addEventListener('click', function () {
+      input.value = '';
+      err.hidden = true;
+      bar.show(r.estimate, true);
+      input.focus();
+    });
+
+    // Fixes
+    panel.appendChild(h('h3', { text: 'Ranked fixes' }));
+    if (r.fixes && r.fixes.length) {
+      var ol = h('ol', { class: 'fixes' });
+      r.fixes.forEach(function (f) {
+        ol.appendChild(h('li', null, [
+          h('span', { class: 'saves', text: 'saves ' + usd(f.saves_usd) }),
+          document.createTextNode(f.name)
+        ]));
+      });
+      panel.appendChild(ol);
+      panel.appendChild(h('p', { class: 'method', text: 'Savings per winter. No vendor quotes yet, so costs are not shown.' }));
+    } else {
+      panel.appendChild(h('p', { class: 'method', text: 'No fixes listed for this building.' }));
+    }
+
+    // Assumptions
+    panel.appendChild(h('h3', { text: 'Assumptions' }));
+    panel.appendChild(h('dl', { class: 'assumptions' }, [
+      h('dt', { text: 'Covering' }), h('dd', { text: r.covering }),
+      h('dt', { text: 'Fuel price' }), h('dd', { text: '$' + r.price_per_gal.toFixed(2) + ' per gallon' })
+    ]));
+
+    title.focus({ preventScroll: true });
+  }
+})();
+</script>
+
+<script src="agents/format.js"></script>
+<script src="agents/check_numbers.js"></script>
+<script src="agents/grant_writer.js"></script>
+<script src="agents/cache/manifest.js"></script>
+<script src="agents/browser.js"></script>
+</body>
+</html>
