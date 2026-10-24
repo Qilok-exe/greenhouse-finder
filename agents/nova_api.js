@@ -16,7 +16,7 @@ const path = require('path');
 const fs = require('fs').promises;
 const { cacheKey, DEFAULT_MODEL_ID } = require('./cache_store');
 
-const REGION = 'us-east-1';
+const REGION = 'us-east-2';
 const MODEL_ID = 'us.amazon.nova-2-lite-v1:0';
 const TOKEN_ENV = 'AWS_BEARER_TOKEN_BEDROCK';
 const DEFAULT_MOCK_DIR = path.join(__dirname, 'cache', 'mock');
