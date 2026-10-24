@@ -87,7 +87,7 @@
     border-left: 1px solid var(--line);
     background: #fff;
     overflow-y: auto;
-    padding: 1.25rem 1.5rem 2rem;
+    padding: 32px 32px 48px;
   }
   /* Wide screens: map 60% on the left, panel 40% on the right, both in view.
      The page itself does not scroll; the panel scrolls on its own. */
@@ -135,121 +135,157 @@
     }
   }
 
-  /* Panel */
-  .placeholder { color: var(--muted); font-size: 1.05rem; }
-  .panel h2 { margin: 0 0 .25rem; font-size: 1.5rem; }
+  /* Panel: an assessment report. One family, three sizes (13 / 15 / 24px),
+     an 8px grid, hairline dividers. Orange is reserved for dollar figures. */
+  aside {
+    --t-small: 13px;
+    --t-body: 15px;
+    --t-title: 24px;
+    --hair: #e8e2dc;
+    --usd: var(--band-4);
+    font-size: var(--t-body);
+    line-height: 24px;
+    font-variant-numeric: tabular-nums;
+  }
+  .placeholder { margin: 0; color: var(--muted); }
+  .panel h2 {
+    margin: 0;
+    font-size: var(--t-title);
+    line-height: 32px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    text-wrap: balance;
+  }
   .panel h2:focus { outline: none; }
-  .meta { margin: 0 0 1.25rem; color: var(--muted); }
-  .panel h3 {
-    margin: 1.75rem 0 .5rem;
-    font-size: .8rem;
-    text-transform: uppercase;
-    letter-spacing: .06em;
+  .meta { margin: 0; color: var(--muted); }
+  .usd { color: var(--usd); }
+
+  /* Aerial photo */
+  .aerial { margin: 24px 0 0; }
+  .aerial-frame {
+    position: relative;
+    width: 256px;
+    height: 256px;
+    overflow: hidden;
+    border: 1px solid #cfc6bd;
+    background: #eeeae5;
+  }
+  .aerial-frame img { position: absolute; width: 256px; height: 256px; display: block; }
+  .aerial figcaption { margin-top: 8px; font-size: var(--t-small); line-height: 16px; color: var(--muted); }
+
+  /* Sections */
+  .section { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--hair); }
+  .panel h3, #agent-output h3, #agent-output h4 {
+    margin: 0 0 8px;
+    font-size: var(--t-small);
+    line-height: 16px;
+    font-weight: 500;
     color: var(--muted);
   }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+  .note { margin: 8px 0 0; font-size: var(--t-small); line-height: 20px; color: var(--muted); max-width: 60ch; }
 
-  /* Range bar — the biggest element in the panel */
-  .range { margin: .5rem 0 0; }
-  .range-chip {
-    display: inline-block;
-    font-size: .8rem;
-    font-weight: 600;
-    padding: .15rem .55rem;
-    border-radius: 999px;
-    background: var(--band-1);
-    color: var(--ink);
-  }
-  .range-chip.narrowed { background: var(--band-4); color: #fff; }
+  /* Range: a thin line, low and high ticks, a dot for the best estimate */
+  .range-status { font-size: var(--t-small); line-height: 16px; color: var(--muted); }
   .range-figures {
-    font-size: 2.4rem;
-    font-weight: 800;
+    margin: 8px 0 16px;
+    font-size: var(--t-title);
+    line-height: 32px;
+    font-weight: 600;
     letter-spacing: -.01em;
-    margin: .35rem 0 .75rem;
-    font-variant-numeric: tabular-nums;
+    color: var(--usd);
     white-space: nowrap;
   }
-  .range-figures .dash { color: var(--muted); font-weight: 400; padding: 0 .15em; }
-  .range-track {
-    position: relative;
-    height: 56px;
-    border-radius: 10px;
-    background: #f1ece6;
-    overflow: hidden;
-  }
-  .range-ghost, .range-fill, .range-point {
+  .range-figures .dash { color: var(--muted); font-weight: 400; padding: 0 .2em; }
+  .range-track { position: relative; height: 24px; }
+  .range-track::before {
+    content: "";
     position: absolute;
-    top: 0;
-    bottom: 0;
+    left: 0; right: 0; top: 50%;
+    border-top: 1px solid var(--hair);
+  }
+  .range-ghost, .range-fill, .range-point, .range-tick, .range-tick-label {
+    position: absolute;
     transition:
       left var(--bar-ms) cubic-bezier(.22, .8, .25, 1),
       width var(--bar-ms) cubic-bezier(.22, .8, .25, 1),
       opacity var(--bar-ms) ease;
   }
-  .range-ghost {
-    background: repeating-linear-gradient(135deg, var(--band-1) 0 6px, transparent 6px 12px);
-    opacity: 0;
-  }
-  .range-ghost.show { opacity: .9; }
-  .range-fill {
-    background: linear-gradient(90deg, var(--band-2), var(--band-4));
-    border-radius: 10px;
-    min-width: 10px;
-  }
+  .range-ghost { top: 50%; border-top: 1px dashed var(--muted); opacity: 0; }
+  .range-ghost.show { opacity: 1; }
+  .range-fill { top: 50%; height: 2px; margin-top: -1px; background: var(--ink); }
+  .range-tick { top: 6px; width: 1px; height: 12px; margin-left: -.5px; background: var(--ink); }
   .range-point {
-    width: 4px;
-    margin-left: -2px;
-    background: #fff;
-    box-shadow: 0 0 0 1px var(--ink);
+    top: 50%;
+    width: 10px; height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: var(--ink);
+    box-shadow: 0 0 0 2px #fff;
   }
+  .range-ticks { position: relative; height: 16px; margin-top: 4px; }
+  .range-tick-label { top: 0; font-size: var(--t-small); line-height: 16px; color: var(--muted); white-space: nowrap; }
   .no-anim, .no-anim * { transition: none !important; }
-  .range-axis {
-    display: flex;
-    justify-content: space-between;
-    font-size: .8rem;
-    color: var(--muted);
-    margin-top: .3rem;
-    font-variant-numeric: tabular-nums;
-  }
-  .range-best { margin: .6rem 0 0; font-size: 1rem; }
-  .range-best strong { font-variant-numeric: tabular-nums; }
-  .method { margin: .4rem 0 0; color: var(--muted); font-size: .9rem; line-height: 1.45; }
+  .range-best { margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--hair); }
 
   /* Calibration form */
-  form.calibrate { display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-end; }
-  form.calibrate label { flex: 1 1 100%; font-weight: 600; }
+  form.calibrate { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  form.calibrate label { flex: 1 1 100%; }
   form.calibrate input {
     font: inherit;
-    font-size: 1.1rem;
-    padding: .45rem .6rem;
-    width: 10rem;
+    height: 40px;
+    padding: 0 8px;
+    width: 160px;
     border: 1px solid #b9aea4;
-    border-radius: 6px;
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
   }
-  button {
+  aside button {
     font: inherit;
-    padding: .5rem .9rem;
-    border-radius: 6px;
-    border: 1px solid var(--band-4);
-    background: var(--band-4);
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 4px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
     color: #fff;
     cursor: pointer;
   }
-  button.secondary { background: #fff; color: var(--band-4); }
+  aside button.secondary { background: #fff; color: var(--ink); border-color: #b9aea4; }
+  aside button:active { transform: scale(.98); }
   button:focus-visible, input:focus-visible, select:focus-visible {
-    outline: 3px solid var(--band-2);
+    outline: 2px solid var(--ink);
     outline-offset: 2px;
   }
-  .error { color: #8a1c00; margin: .4rem 0 0; font-size: .9rem; }
+  .error { color: #9b1c1c; margin: 8px 0 0; font-size: var(--t-small); line-height: 20px; }
 
-  /* Fixes and assumptions */
-  ol.fixes { margin: 0; padding-left: 1.25rem; }
-  ol.fixes li { padding: .35rem 0; border-bottom: 1px solid var(--line); }
-  ol.fixes .saves { float: right; font-weight: 700; font-variant-numeric: tabular-nums; }
-  dl.assumptions { display: grid; grid-template-columns: auto 1fr; gap: .3rem 1rem; margin: 0; }
-  dl.assumptions dt { color: var(--muted); }
-  dl.assumptions dd { margin: 0; }
+  /* Report tables: label left, value right, hairline rows */
+  .report-table, .agent-fixes-table { width: 100%; border-collapse: collapse; }
+  .report-table th, .report-table td,
+  .agent-fixes-table th, .agent-fixes-table td {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--hair);
+    text-align: left;
+    vertical-align: baseline;
+    font-weight: 400;
+  }
+  .report-table th + th, .report-table td + td,
+  .agent-fixes-table th + th, .agent-fixes-table td + td { text-align: right; padding-left: 16px; }
+  .report-table thead th, .agent-fixes-table tr:first-child th {
+    padding-top: 0;
+    font-size: var(--t-small);
+    line-height: 16px;
+    color: var(--muted);
+  }
+  .report-table tbody th { color: var(--ink); }
+  .report-table td.num { white-space: nowrap; }
 
-  #agent-output { margin-top: 1.75rem; }
+  /* Grant draft (rendered by agents/browser.js) follows the same report rules */
+  #agent-output:not(:empty) { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--hair); }
+  #agent-output section + section, #agent-output .agent-fixes-table,
+  #agent-output .agent-quote-request, #agent-output .agent-applicant-checks { margin-top: 32px; }
+  #agent-output p { margin: 0; max-width: 65ch; }
+  #agent-output .agent-error, #agent-output .agent-quote-missing { color: var(--muted); font-size: var(--t-small); line-height: 20px; }
+  #agent-output .agent-applicant-checks label { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; }
 
   /* Legend */
   .legend {
@@ -363,13 +399,14 @@
   // Base maps. The greenhouse polygons and dots live in Leaflet's overlay pane,
   // which sits above the tile pane, so the outlines stay on top of every base map.
   var AERIAL = { maxZoom: 20, attribution: 'MassGIS' };   // MassGIS tile caches go to level 20
+  var AERIAL_2025 = 'https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Aerial_Imagery_2025/MapServer/tile/{z}/{y}/{x}';
   var baseMaps = {
     'Streets': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }),
     'Aerial 2023': L.tileLayer('https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/orthos2023/MapServer/tile/{z}/{y}/{x}', AERIAL),
-    'Aerial 2025': L.tileLayer('https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Aerial_Imagery_2025/MapServer/tile/{z}/{y}/{x}', AERIAL)
+    'Aerial 2025': L.tileLayer(AERIAL_2025, AERIAL)
   };
   baseMaps.Streets.addTo(map);
   var basemapSwitch = L.control.layers(baseMaps, null, { position: 'topright', collapsed: false }).addTo(map);
@@ -480,27 +517,43 @@
   function RangeBar(wide) {
     this.wide = wide;
     this.shown = null;
-    this.chip = h('span', { class: 'range-chip' });
+    this.chip = h('span', { class: 'range-status' });
     this.lowEl = h('span');
     this.highEl = h('span');
     this.figures = h('div', { class: 'range-figures' },
       [this.lowEl, h('span', { class: 'dash', 'aria-hidden': 'true', text: '–' }), this.highEl]);
     this.ghost = h('div', { class: 'range-ghost' });
     this.fill = h('div', { class: 'range-fill' });
+    this.lowTick = h('div', { class: 'range-tick' });
+    this.highTick = h('div', { class: 'range-tick' });
     this.point = h('div', { class: 'range-point' });
-    this.track = h('div', { class: 'range-track', role: 'img' }, [this.ghost, this.fill, this.point]);
-    this.axisMin = h('span', { text: usd(0) });
-    this.axisMax = h('span');
-    this.bestEl = h('strong');
-    this.best = h('p', { class: 'range-best' }, [document.createTextNode('Best estimate '), this.bestEl]);
-    this.methodEl = h('p', { class: 'method' });
-    this.pointMethodEl = h('p', { class: 'method' });
+    this.track = h('div', { class: 'range-track', role: 'img' },
+      [this.ghost, this.fill, this.lowTick, this.highTick, this.point]);
+    this.lowLabel = h('span', { class: 'range-tick-label' });
+    this.highLabel = h('span', { class: 'range-tick-label' });
+    this.bestEl = h('span', { class: 'usd' });
+    this.best = h('div', { class: 'row range-best' }, [h('span', { text: 'Best estimate' }), this.bestEl]);
+    this.methodEl = h('p', { class: 'note' });
+    this.pointMethodEl = h('p', { class: 'note' });
     this.root = h('div', { class: 'range' }, [
-      this.chip, this.figures, this.track,
-      h('div', { class: 'range-axis', 'aria-hidden': 'true' }, [this.axisMin, this.axisMax]),
+      h('div', { class: 'row' }, [h('h3', { text: 'Estimated fuel cost this winter' }), this.chip]),
+      this.figures, this.track,
+      h('div', { class: 'range-ticks', 'aria-hidden': 'true' }, [this.lowLabel, this.highLabel]),
       this.best, this.methodEl, this.pointMethodEl
     ]);
   }
+
+  // Puts the low label to the left of its tick and the high label to the right,
+  // kept inside the track and clear of each other. Positions are in % of the track.
+  RangeBar.prototype.placeLabels = function (lowPct, highPct) {
+    var W = this.track.clientWidth;
+    if (!W) { this.lowLabel.style.left = lowPct + '%'; this.highLabel.style.left = highPct + '%'; return; }
+    var lw = this.lowLabel.offsetWidth, hw = this.highLabel.offsetWidth;
+    var lx = Math.min(Math.max(0, lowPct / 100 * W - lw - 4), W - lw);
+    var hx = Math.min(Math.max(lx + lw + 8, highPct / 100 * W + 4), W - hw);
+    this.lowLabel.style.left = (lx / W * 100) + '%';
+    this.highLabel.style.left = (hx / W * 100) + '%';
+  };
 
   RangeBar.prototype.show = function (est, animate) {
     var narrowed = est !== this.wide;
@@ -511,11 +564,15 @@
 
     this.fill.style.left = pct(est.low.usd);
     this.fill.style.width = pct(est.high.usd - est.low.usd);
+    this.lowTick.style.left = pct(est.low.usd);
+    this.highTick.style.left = pct(est.high.usd);
     this.point.style.left = pct(est.point.usd);
     this.ghost.style.left = pct(this.wide.low.usd);
     this.ghost.style.width = pct(this.wide.high.usd - this.wide.low.usd);
     this.ghost.classList.toggle('show', narrowed);
-    this.axisMax.textContent = usd(max);
+    this.lowLabel.textContent = 'Low ' + usd(est.low.usd);
+    this.highLabel.textContent = 'High ' + usd(est.high.usd);
+    this.placeLabels(est.low.usd / max * 100, est.high.usd / max * 100);
 
     var ms = animate ? barMs() : 0;
     var prev = this.shown || est;
@@ -524,7 +581,6 @@
     tween(this.bestEl, prev.point.usd, est.point.usd, ms);
 
     this.chip.textContent = narrowed ? 'Narrowed by your fuel use' : 'Wide range';
-    this.chip.classList.toggle('narrowed', narrowed);
     // estimate.method is shown only when it adds something beyond point.method.
     this.methodEl.textContent = est.method !== est.point.method ? est.method : '';
     this.methodEl.hidden = !this.methodEl.textContent;
@@ -543,6 +599,35 @@
   // ---------- panel ----------
   var panel = document.getElementById('panel');
 
+  // A 256px window of 2025 MassGIS imagery at zoom 18, centred on the record's
+  // lat/lon. Built from the up-to-four 256px tiles that the window overlaps.
+  function aerialPhoto(r) {
+    var z = 18, size = 256, world = 256 * Math.pow(2, z);
+    var latRad = r.lat * Math.PI / 180;
+    var px = (r.lon + 180) / 360 * world;
+    var py = (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * world;
+    var left = Math.round(px - size / 2), top = Math.round(py - size / 2);
+    var frame = h('div', { class: 'aerial-frame', role: 'img',
+      'aria-label': 'Aerial photo of ' + (r.name || 'this greenhouse') + ', 2025' });
+    var figure = h('figure', { class: 'aerial' },
+      [frame, h('figcaption', { text: 'Aerial imagery 2025, MassGIS' })]);
+    for (var ty = Math.floor(top / 256); ty <= Math.floor((top + size - 1) / 256); ty++) {
+      for (var tx = Math.floor(left / 256); tx <= Math.floor((left + size - 1) / 256); tx++) {
+        var img = h('img', { alt: '', width: '256', height: '256', decoding: 'async',
+          src: AERIAL_2025.replace('{z}', z).replace('{y}', ty).replace('{x}', tx) });
+        img.style.left = (tx * 256 - left) + 'px';
+        img.style.top = (ty * 256 - top) + 'px';
+        img.addEventListener('error', function () { figure.hidden = true; });
+        frame.appendChild(img);
+      }
+    }
+    return figure;
+  }
+
+  function section(label, children) {
+    return h('section', { class: 'section' }, [label ? h('h3', { text: label }) : null].concat(children));
+  }
+
   function select(r) {
     if (selectedId && layerById[selectedId]) {
       var prevRec = PROFILES.find(function (x) { return x.id === selectedId; });
@@ -559,19 +644,18 @@
   function renderPanel(r) {
     panel.textContent = '';
 
-    // "Name · Town", or "Unnamed greenhouse · Town"; town omitted if missing.
-    var titleText = (r.name || 'Unnamed greenhouse') + (r.town ? ' · ' + r.town : '');
-    var title = h('h2', { tabindex: '-1', text: titleText });
+    // Name, then "Town · area"; town omitted if missing.
+    var title = h('h2', { tabindex: '-1', text: r.name || 'Unnamed greenhouse' });
     panel.appendChild(title);
-    panel.appendChild(h('p', { class: 'meta', text: int(r.sqft) + ' sq ft · ' + r.covering }));
+    panel.appendChild(h('p', { class: 'meta', text: (r.town ? r.town + ' · ' : '') + int(r.sqft) + ' sq ft' }));
+    panel.appendChild(aerialPhoto(r));
 
     // Range bar
     var bar = new RangeBar(r.estimate);
-    panel.appendChild(bar.root);
+    panel.appendChild(section(null, [bar.root]));
     bar.show(r.estimate, false);
 
     // Calibration
-    panel.appendChild(h('h3', { text: 'Narrow it down' }));
     var inputId = 'gallons-' + r.id.replace(/[^a-z0-9]/gi, '-');
     var input = h('input', { id: inputId, type: 'number', inputmode: 'decimal', min: '0', step: 'any' });
     var submit = h('button', { type: 'submit', text: 'Narrow the estimate' });
@@ -581,8 +665,7 @@
     var form = h('form', { class: 'calibrate' }, [
       h('label', { for: inputId, text: 'Gallons burned last winter' }), input, submit, reset
     ]);
-    panel.appendChild(form);
-    panel.appendChild(err);
+    panel.appendChild(section('Narrow it down', [form, err]));
 
     function apply() {
       err.hidden = true;
@@ -626,34 +709,41 @@
     });
 
     // Fixes (re-rendered in place when the estimate is calibrated or reset)
-    panel.appendChild(h('h3', { text: 'Ranked fixes' }));
     var fixesBox = h('div', { 'aria-live': 'polite' });
-    panel.appendChild(fixesBox);
+    panel.appendChild(section('Ranked fixes', [fixesBox]));
     function renderFixes(fixes, baselineText) {
       fixesBox.textContent = '';
       if (!fixes || !fixes.length) {
-        fixesBox.appendChild(h('p', { class: 'method', text: 'No fixes listed for this building.' }));
+        fixesBox.appendChild(h('p', { class: 'note', text: 'No fixes listed for this building.' }));
         return;
       }
-      var ol = h('ol', { class: 'fixes' });
+      var body = h('tbody');
       fixes.forEach(function (f) {
-        ol.appendChild(h('li', null, [
-          h('span', { class: 'saves', text: 'saves ' + usd(f.saves_usd) }),
-          document.createTextNode(f.name)
+        body.appendChild(h('tr', null, [
+          h('th', { scope: 'row', text: f.name }),
+          h('td', { class: 'num usd', text: usd(f.saves_usd) })
         ]));
       });
-      fixesBox.appendChild(ol);
-      fixesBox.appendChild(h('p', { class: 'method', text: baselineText }));
-      fixesBox.appendChild(h('p', { class: 'method', text: 'Savings per winter. No vendor quotes yet, so costs are not shown.' }));
+      fixesBox.appendChild(h('table', { class: 'report-table' }, [
+        h('thead', null, [h('tr', null, [
+          h('th', { scope: 'col', text: 'Fix' }),
+          h('th', { scope: 'col', text: 'Saves per winter' })
+        ])]),
+        body
+      ]));
+      fixesBox.appendChild(h('p', { class: 'note', text: baselineText }));
+      fixesBox.appendChild(h('p', { class: 'note', text: 'Savings per winter. No vendor quotes yet, so costs are not shown.' }));
     }
     renderFixes(r.fixes, 'Against the size-only estimate of ' + usd(r.usd_winter) + '.');
 
     // Assumptions
-    panel.appendChild(h('h3', { text: 'Assumptions' }));
-    panel.appendChild(h('dl', { class: 'assumptions' }, [
-      h('dt', { text: 'Covering' }), h('dd', { text: r.covering }),
-      h('dt', { text: 'Fuel price' }), h('dd', { text: '$' + r.price_per_gal.toFixed(2) + ' per gallon' })
-    ]));
+    panel.appendChild(section('Assumptions', [h('table', { class: 'report-table' }, [h('tbody', null, [
+      h('tr', null, [h('th', { scope: 'row', text: 'Covering' }), h('td', { text: r.covering })]),
+      h('tr', null, [h('th', { scope: 'row', text: 'Fuel price' }), h('td', { class: 'num' }, [
+        h('span', { class: 'usd', text: '$' + r.price_per_gal.toFixed(2) }),
+        document.createTextNode(' per gallon')
+      ])])
+    ])])]));
 
     title.focus({ preventScroll: true });
   }
