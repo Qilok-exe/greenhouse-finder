@@ -46,18 +46,24 @@
     flex-direction: column;
     gap: .35rem;
   }
+  /* County total line: large and heavy, tracked tighter as it grows (tracking
+     is size-specific). One line where it fits; balanced lines where it does not,
+     instead of overflowing. */
   header h1 {
     margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-    line-height: 1.25;
-    white-space: nowrap;
+    font-size: clamp(1.25rem, 1rem + .7vw, 1.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -.01em;
+    font-variant-numeric: tabular-nums;
+    text-wrap: balance;
   }
   header h1 .sep { color: var(--band-2); padding: 0 .4em; }
   /* The dollar figure is the largest element in the header. */
   header h1 .usd {
-    font-size: 2rem;
+    font-size: clamp(2rem, 1.5rem + 1.1vw, 2.5rem);
     font-weight: 800;
+    letter-spacing: -.02em;
     color: var(--band-4);
     font-variant-numeric: tabular-nums;
   }
@@ -69,9 +75,6 @@
   }
   header label { font-size: .9rem; color: var(--muted); }
   header select { font: inherit; font-size: .95rem; padding: .3rem .4rem; max-width: 22rem; }
-  @media (max-width: 1100px) {
-    header h1 { white-space: normal; }
-  }
 
   /* Layout */
   main {
@@ -86,11 +89,50 @@
     overflow-y: auto;
     padding: 1.25rem 1.5rem 2rem;
   }
+  /* Wide screens: map 60% on the left, panel 40% on the right, both in view.
+     The page itself does not scroll; the panel scrolls on its own. */
+  @media (min-width: 1001px) {
+    body { overflow: hidden; }
+    main { grid-template-columns: 60% 40%; }
+    #map { min-height: 0; }
+    aside { overscroll-behavior: contain; scrollbar-gutter: stable; }
+  }
   @media (max-width: 860px) {
     body { height: auto; }
     main { grid-template-columns: 1fr; }
     #map { height: 60vh; }
     aside { border-left: 0; border-top: 1px solid var(--line); }
+  }
+
+  /* Map controls use the page's system font. */
+  .leaflet-container { font-family: inherit; }
+  /* Base map switch (Leaflet layers control), laid out like the legend. */
+  .leaflet-control-layers.leaflet-control-layers-expanded {
+    padding: .5rem .75rem;
+    border: 0;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
+    color: var(--ink);
+    font-size: .85rem;
+    line-height: 1.6;
+  }
+  .leaflet-control-layers label { font-size: inherit; cursor: pointer; }
+  .leaflet-control-layers-selector { accent-color: var(--band-4); }
+  /* Floating map cards (legend and base map switch): a light translucent
+     material, solid when the user asks for less transparency or more contrast. */
+  .leaflet-control.legend,
+  .leaflet-control-layers.leaflet-control-layers-expanded {
+    background: rgba(255, 255, 255, .8);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    backdrop-filter: blur(16px) saturate(180%);
+  }
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    .leaflet-control.legend,
+    .leaflet-control-layers.leaflet-control-layers-expanded {
+      background: #fff;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
   }
 
   /* Panel */
@@ -317,10 +359,23 @@
 
   // ---------- map ----------
   var map = L.map('map', { preferCanvas: false });
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
+
+  // Base maps. The greenhouse polygons and dots live in Leaflet's overlay pane,
+  // which sits above the tile pane, so the outlines stay on top of every base map.
+  var AERIAL = { maxZoom: 20, attribution: 'MassGIS' };   // MassGIS tile caches go to level 20
+  var baseMaps = {
+    'Streets': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }),
+    'Aerial 2023': L.tileLayer('https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/orthos2023/MapServer/tile/{z}/{y}/{x}', AERIAL),
+    'Aerial 2025': L.tileLayer('https://tiles.arcgis.com/tiles/hGdibHYSPO59RG1h/arcgis/rest/services/Massachusetts_Aerial_Imagery_2025/MapServer/tile/{z}/{y}/{x}', AERIAL)
+  };
+  baseMaps.Streets.addTo(map);
+  var basemapSwitch = L.control.layers(baseMaps, null, { position: 'topright', collapsed: false }).addTo(map);
+  var baseList = basemapSwitch.getContainer().querySelector('.leaflet-control-layers-base');
+  baseList.setAttribute('role', 'radiogroup');
+  baseList.setAttribute('aria-label', 'Base map');
 
   var polygons = L.featureGroup().addTo(map);
   var dots = L.featureGroup();            // shown when zoomed out: buildings are sub-pixel there
