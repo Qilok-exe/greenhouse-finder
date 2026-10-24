@@ -532,39 +532,56 @@
     function apply() {
       err.hidden = true;
       var raw = input.value.trim();
-      if (raw === '') { bar.show(r.estimate, true); return; }
+      if (raw === '') { showBaseline(); return; }
       var gallons = Number(raw);
       try {
-        bar.show(Calc.calibrate(r, gallons), true);
+        var calibrated = Calc.calibrate(r, gallons);
+        bar.show(calibrated, true);
+        renderFixes(
+          Calc.rankedFixes(calibrated.point.usd, r.covering),
+          'Against your calibrated estimate of ' + usd(calibrated.point.usd) + '.'
+        );
       } catch (e) {
         err.textContent = 'Enter a number of gallons, zero or more.';
         err.hidden = false;
       }
+    }
+    // Size-only baseline: the record's own fixes, computed from usd_winter.
+    function showBaseline() {
+      bar.show(r.estimate, true);
+      renderFixes(r.fixes, 'Against the size-only estimate of ' + usd(r.usd_winter) + '.');
     }
     form.addEventListener('submit', function (e) { e.preventDefault(); apply(); });
     input.addEventListener('change', apply);
     reset.addEventListener('click', function () {
       input.value = '';
       err.hidden = true;
-      bar.show(r.estimate, true);
+      showBaseline();
       input.focus();
     });
 
-    // Fixes
+    // Fixes (re-rendered in place when the estimate is calibrated or reset)
     panel.appendChild(h('h3', { text: 'Ranked fixes' }));
-    if (r.fixes && r.fixes.length) {
+    var fixesBox = h('div', { 'aria-live': 'polite' });
+    panel.appendChild(fixesBox);
+    function renderFixes(fixes, baselineText) {
+      fixesBox.textContent = '';
+      if (!fixes || !fixes.length) {
+        fixesBox.appendChild(h('p', { class: 'method', text: 'No fixes listed for this building.' }));
+        return;
+      }
       var ol = h('ol', { class: 'fixes' });
-      r.fixes.forEach(function (f) {
+      fixes.forEach(function (f) {
         ol.appendChild(h('li', null, [
           h('span', { class: 'saves', text: 'saves ' + usd(f.saves_usd) }),
           document.createTextNode(f.name)
         ]));
       });
-      panel.appendChild(ol);
-      panel.appendChild(h('p', { class: 'method', text: 'Savings per winter. No vendor quotes yet, so costs are not shown.' }));
-    } else {
-      panel.appendChild(h('p', { class: 'method', text: 'No fixes listed for this building.' }));
+      fixesBox.appendChild(ol);
+      fixesBox.appendChild(h('p', { class: 'method', text: baselineText }));
+      fixesBox.appendChild(h('p', { class: 'method', text: 'Savings per winter. No vendor quotes yet, so costs are not shown.' }));
     }
+    renderFixes(r.fixes, 'Against the size-only estimate of ' + usd(r.usd_winter) + '.');
 
     // Assumptions
     panel.appendChild(h('h3', { text: 'Assumptions' }));
