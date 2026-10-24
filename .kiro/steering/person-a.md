@@ -44,7 +44,7 @@ You are helping Person A. Person A owns everything written in words. Person B ow
 ## Recorded departures (grant-writer spec)
 These were decided by Person A and override the defaults above.
 1. Applicant checks come from checkboxes. "Match is cash" and "Nothing bought yet" are two checkboxes rendered inside `<div id="agent-output">`. Their state (match_is_cash, nothing_bought, both false by default) is held in memory in agents/browser.js. It is never stored in the record and never written to data/.
-2. The grant calculations live in agents/. flatten(record) in agents/grant_writer.js derives grant_request, farmer_match, gallons_saved and co2_tons_saved (plus the flat estimate_* and top_fix_* fields). The constants are GRANT_SHARE = 0.8 and GRANT_CAP_USD = 50000 (source: CSAP FY26 RFR and Round II how-to page: minimum 20% cash match, Greenhouse Energy Efficiency maximum $50,000) and CO2_KG_PER_GALLON = 5.72. All other numeric work stays with Person B.
+2. The grant calculations live in agents/. flatten(record) in agents/grant_writer.js derives grant_request, farmer_match, gallons_saved and carbon_tons_saved (plus the flat estimate_* and top_fix_* fields). The constants are GRANT_SHARE = 0.8 and GRANT_CAP_USD = 50000 (source: CSAP FY26 RFR and Round II how-to page: minimum 20% cash match, Greenhouse Energy Efficiency maximum $50,000) and CO2_KG_PER_GALLON = 5.72. All other numeric work stays with Person B.
 
 ## Order of work
 1. One Nova call working: text first, then the PDF.

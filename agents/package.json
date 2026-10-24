@@ -1,0 +1,19 @@
+{
+  "name": "greenhouse-grant-writer-agents",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Grant Writer: offline Nova precompute, number checker and browser view for the greenhouse finder.",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1156.0"
+  },
+  "devDependencies": {
+    "fast-check": "^4.10.2"
+  }
+}

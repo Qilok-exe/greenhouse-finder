@@ -131,7 +131,7 @@ type FlatRecord = Record & Partial<{
   top_fix_name: string; top_fix_saves_usd: number; top_fix_cost_usd: number;
   top_fix_payback_years: number;
   grant_request: number; farmer_match: number;
-  gallons_saved: number; co2_tons_saved: number;
+  gallons_saved: number; carbon_tons_saved: number;
 }>;
 ```
 
@@ -144,7 +144,7 @@ type FlatRecord = Record & Partial<{
 | `grant_request` | `Math.round(Math.min(GRANT_SHARE * cost, GRANT_CAP_USD))` | as `top_fix_*` |
 | `farmer_match` | `Math.round(cost) - grant_request` (equal to round(cost − grant_request) because `grant_request` is an integer; avoids float drift) | as `top_fix_*` |
 | `gallons_saved` | `Math.round(top_fix_saves_usd / price_per_gal)` | as `top_fix_*`, or `price_per_gal` not a number > 0 |
-| `co2_tons_saved` | `Math.round(gallons_saved * CO2_KG_PER_GALLON / 1000 * 10) / 10` | as `gallons_saved` |
+| `carbon_tons_saved` | `Math.round(gallons_saved * CO2_KG_PER_GALLON / 1000 * 10) / 10` | as `gallons_saved` |
 
 Cache layout:
 

@@ -1,0 +1,518 @@
+{
+  "pbtResults": {
+    "2.2 Write property test for the formatter": {
+      "status": "passed",
+      "lastRunTimestamp": 1792873322975
+    },
+    "3.2 Write property and unit tests for the cache": {
+      "status": "passed",
+      "lastRunTimestamp": 1792873360598
+    },
+    "5.4 Write property and unit tests for the draft": {
+      "status": "passed",
+      "lastRunTimestamp": 1792873715404
+    },
+    "5.3 Write property tests for `flatten`, `fill` and `validateTemplate`": {
+      "status": "passed",
+      "lastRunTimestamp": 1792874195265
+    },
+    "6.2 Write property and unit tests for extraction and generation": {
+      "status": "passed",
+      "lastRunTimestamp": 1792874407864
+    },
+    "7.4 Write property tests for the checker": {
+      "status": "passed",
+      "lastRunTimestamp": 1792874427675
+    }
+  },
+  "executionHistory": {
+    "1.1 Create `agents/package.json`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873065821
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873073562
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873171572
+      }
+    ],
+    "1.2 Create `agents/test/fixtures/records.json`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873065903
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873073846
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873171629
+      }
+    ],
+    "2.1 Write `formatNumber` and `NUMBER_RE` as a UMD file (global `AgentFormat`)": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873065954
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873175204
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873253644
+      }
+    ],
+    "2.2 Write property test for the formatter": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066032
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873257716
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873387442
+      }
+    ],
+    "3.1 Write `cacheKey` and `cachedCall`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066072
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873175746
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873254395
+      }
+    ],
+    "3.2 Write property and unit tests for the cache": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066116
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873258482
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873387768
+      }
+    ],
+    "4.1 Write Mock_Mode first (AWS access is pending)": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066158
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873259699
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873388923
+      }
+    ],
+    "4.2 DEFERRED until the user says AWS is ready: Write the live Converse path": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066198
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873395184
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873546858
+      }
+    ],
+    "4.3 Write unit tests for Mock_Mode": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066237
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874056359
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874144231
+      }
+    ],
+    "5.1 Write constants, `PLACEHOLDER_NAMES`, `flatten`, `fill` and `validateTemplate` as a UMD file (global `AgentGrantWriter`, no `require` of Node modules)": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066278
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873260880
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873390564
+      }
+    ],
+    "5.2 Write `renderFixesTable`, `fixesTableText`, `QUOTE_REQUEST_TEMPLATE` and `buildDraft`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066318
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873396449
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873547178
+      }
+    ],
+    "5.3 Write property tests for `flatten`, `fill` and `validateTemplate`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066367
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873589767
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874204946
+      }
+    ],
+    "5.4 Write property and unit tests for the draft": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066411
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873590659
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874013392
+      }
+    ],
+    "6.1 Write `extractSections`, `parseSections` and `generateTemplates` with injected `deps` (`readRulebook`, `ask`, `askWithPdf`, `cachedCall`)": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066454
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873586564
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874013451
+      }
+    ],
+    "6.2 Write property and unit tests for extraction and generation": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066494
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874209137
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874442025
+      }
+    ],
+    "7.1 Write `checkNumbers` in `agents/check_numbers.js` as a UMD file (global `AgentCheckNumbers`)": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066534
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873261805
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873391465
+      }
+    ],
+    "7.2 Add the CLI to `agents/check_numbers.js`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066575
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873587820
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874014499
+      }
+    ],
+    "7.3 Create the hook `.kiro/hooks/check-numbers.json` with the `createHook` tool (do not hand-write it)": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066619
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874210387
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874442592
+      }
+    ],
+    "7.4 Write property tests for the checker": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066687
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874211137
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874443865
+      }
+    ],
+    "8.1 Write `agents/precompute.js`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066728
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874212333
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874444623
+      }
+    ],
+    "8.2 Add mock responses under `agents/cache/mock/`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066772
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874449408
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874865628
+      }
+    ],
+    "8.3 Write unit tests for precompute": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066813
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874868556
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874992782
+      }
+    ],
+    "9.1 Write `AgentView` with `render(record)` and `getApplicantChecks()`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066855
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873588966
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874015532
+      }
+    ],
+    "9.2 Write DOM tests with a minimal fake `document`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066896
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874213238
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874445443
+      }
+    ],
+    "10. Final checkpoint": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873066935
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874996297
+      },
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792875041074
+      }
+    ],
+    "2. Implement the shared number formatter in `agents/format.js`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873387498
+      }
+    ],
+    "3. Implement the disk cache in `agents/cache_store.js`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792873387811
+      }
+    ],
+    "4. Implement the Nova client in `agents/nova_api.js`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874144286
+      }
+    ],
+    "5. Implement the pure parts of `agents/grant_writer.js`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874204990
+      }
+    ],
+    "6. Implement extraction and Template generation in `agents/grant_writer.js`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874442091
+      }
+    ],
+    "7. Implement the number checker and its Kiro hook": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874443909
+      }
+    ],
+    "9. Implement the browser view in `agents/browser.js`": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874445492
+      }
+    ],
+    "8. Implement precompute and the mock run": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792874992844
+      }
+    ],
+    "1. Set up the package and test fixtures": [
+      {
+        "executionId": "4e2c1171-e405-4634-a4b3-1f3488113d6d",
+        "chatSessionId": "sess_9dc1d81f-f23b-4836-9713-9c405fcd91f3",
+        "timestamp": 1792875053369
+      }
+    ]
+  }
+}

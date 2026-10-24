@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Check grant numbers",
+      "trigger": "PostFileSave",
+      "description": "When a file under agents/ is saved, run the Number_Checker over every cached Template's filled text and the Fixes_Table for each available Record, and report PASS or the Section name and rejected numbers (Requirement 4.9).",
+      "matcher": "agents[\\\\/]",
+      "action": {
+        "type": "command",
+        "command": "node agents/check_numbers.js",
+        "timeout": 60
+      }
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+[
+  {
+    "id": "way/118883914",
+    "name": "Vervane Greenhouse",
+    "lat": 42.328418,
+    "lon": -72.532322,
+    "sqft": 2906,
+    "bays": 2,
+    "covering": "double_poly (assumed)",
+    "town": "Amherst",
+    "utility": "Eversource",
+    "hdd": 6850,
+    "price_per_gal": 3.66,
+    "estimate": { "low": 4500, "high": 6100, "point": 5287, "confidence": "medium", "method": "degree_day" },
+    "fixes": [
+      { "name": "Thermal curtain", "saves_usd": 1850, "cost_usd": 9200, "payback_years": 5 },
+      { "name": "Seal end walls", "saves_usd": 420, "cost_usd": 600, "payback_years": 1.4 },
+      { "name": "Inflation blower for double poly", "saves_usd": 310, "cost_usd": 450, "payback_years": 1.5 }
+    ],
+    "evidence": { "bill_uploaded": true, "quote_uploaded": true, "answers": { "heating_fuel": "propane", "owner_operated": true } }
+  },
+  {
+    "id": "way/147156713",
+    "name": "CNS Research and Education Greenhouse",
+    "lat": 42.392301,
+    "lon": -72.531914,
+    "sqft": 24544,
+    "bays": 6,
+    "covering": "double_poly (assumed)",
+    "town": "Amherst",
+    "utility": "Eversource",
+    "hdd": 6850,
+    "price_per_gal": 3.66,
+    "estimate": { "low": 38000, "high": 51000, "point": 44650, "confidence": "low", "method": "degree_day" },
+    "fixes": [
+      { "name": "Seal end walls", "saves_usd": 900, "cost_usd": 1500, "payback_years": 1.7 },
+      { "name": "Thermal curtain", "saves_usd": 7600, "cost_usd": 85000, "payback_years": 11.2 },
+      { "name": "Condensing unit heaters", "saves_usd": 7600, "cost_usd": 64000, "payback_years": 8.4 }
+    ],
+    "evidence": { "bill_uploaded": false, "quote_uploaded": false, "answers": { "heating_fuel": "propane", "owner_operated": false } }
+  },
+  {
+    "id": "way/147156719",
+    "name": "North Pleasant Street Greenhouse",
+    "lat": 42.391748,
+    "lon": -72.531902,
+    "sqft": 2979,
+    "bays": 1,
+    "covering": "double_poly (assumed)",
+    "town": "Amherst",
+    "utility": "Eversource",
+    "hdd": 6850,
+    "price_per_gal": 3.66,
+    "estimate": { "low": 4600, "high": 6300, "point": 5420, "confidence": "medium", "method": "degree_day" },
+    "fixes": [],
+    "evidence": { "bill_uploaded": true, "quote_uploaded": false, "answers": { "heating_fuel": "propane", "owner_operated": true } }
+  },
+  {
+    "id": "way/149975949",
+    "name": "Mill River Farm Greenhouse",
+    "lat": 42.31647,
+    "lon": -72.618482,
+    "sqft": 3933,
+    "bays": 2,
+    "covering": "double_poly (assumed)",
+    "town": "Northampton",
+    "utility": "National Grid",
+    "hdd": 6900,
+    "price_per_gal": 0,
+    "estimate": { "low": 6100, "high": 8200, "point": 7155, "confidence": "low", "method": "degree_day" },
+    "fixes": [
+      { "name": "Thermal curtain", "saves_usd": 2500, "cost_usd": 12400, "payback_years": 5 }
+    ],
+    "evidence": { "bill_uploaded": false, "quote_uploaded": true, "answers": { "heating_fuel": "propane", "owner_operated": true } }
+  },
+  {
+    "id": "way/212516707",
+    "name": "Hothouse 2 at Hilltop Farm",
+    "lat": 42.404188,
+    "lon": -72.842485,
+    "sqft": 2359,
+    "bays": 1,
+    "covering": "double_poly (assumed)",
+    "town": "Goshen",
+    "utility": "Eversource",
+    "hdd": 7400,
+    "price_per_gal": 3.58,
+    "estimate": { "low": 3600, "high": 5000, "point": 4292, "confidence": "medium", "method": "degree_day" },
+    "fixes": [
+      { "name": "Seal end walls", "saves_usd": 380, "cost_usd": 550, "payback_years": 1.4 },
+      { "name": "Thermal curtain", "saves_usd": 1500, "cost_usd": 7800, "payback_years": 5.2 }
+    ],
+    "evidence": { "bill_uploaded": true, "quote_uploaded": false, "answers": { "heating_fuel": "propane", "owner_operated": true } }
+  }
+]
