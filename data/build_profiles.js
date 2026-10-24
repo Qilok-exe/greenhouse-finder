@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 // Builds data/profiles.json from data/greenhouses_hampshire.json.
 // Plain Node, no dependencies. The source file is read-only here.
+// All estimate maths comes from ../calculator.js.
 
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
+const Calculator = require('../calculator.js');
 
 const SRC = path.join(__dirname, 'greenhouses_hampshire.json');
 const OUT = path.join(__dirname, 'profiles.json');
@@ -15,7 +17,7 @@ const DEFAULTS = {
   town: null,
   utility: null,
   hdd: 6000,
-  price_per_gal: 3.66,
+  price_per_gal: Calculator.PRICE_PER_GAL,
 };
 
 // Rule 1: case-insensitive substring match on the record name.
@@ -56,7 +58,13 @@ for (const rec of records) {
     continue;
   }
   // Spread the original record first so no existing field is renamed or lost.
-  kept.push({ ...rec, ...DEFAULTS });
+  kept.push({
+    ...rec,
+    ...DEFAULTS,
+    estimate: Calculator.wideRange(rec.sqft),
+    fixes: Calculator.rankedFixes(rec.usd_winter, rec.covering),
+    evidence: { bill_uploaded: false, quote_uploaded: false, answers: {} },
+  });
 }
 
 fs.writeFileSync(OUT, JSON.stringify(kept, null, 2) + '\n');
