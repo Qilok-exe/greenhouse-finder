@@ -536,11 +536,20 @@
       var gallons = Number(raw);
       try {
         var calibrated = Calc.calibrate(r, gallons);
+        var calibratedFixes = Calc.rankedFixes(calibrated.point.usd, r.covering);
         bar.show(calibrated, true);
         renderFixes(
-          Calc.rankedFixes(calibrated.point.usd, r.covering),
+          calibratedFixes,
           'Against your calibrated estimate of ' + usd(calibrated.point.usd) + '.'
         );
+        // Shallow copy for the agents; evidence is copied too so the original
+        // record's nested object is never mutated.
+        var view = Object.assign({}, r, {
+          estimate: calibrated,
+          fixes: calibratedFixes,
+          evidence: Object.assign({}, r.evidence, { bill_uploaded: true })
+        });
+        if (window.AgentView) AgentView.render(view);
       } catch (e) {
         err.textContent = 'Enter a number of gallons, zero or more.';
         err.hidden = false;
@@ -550,6 +559,7 @@
     function showBaseline() {
       bar.show(r.estimate, true);
       renderFixes(r.fixes, 'Against the size-only estimate of ' + usd(r.usd_winter) + '.');
+      if (window.AgentView) AgentView.render(r);
     }
     form.addEventListener('submit', function (e) { e.preventDefault(); apply(); });
     input.addEventListener('change', apply);
