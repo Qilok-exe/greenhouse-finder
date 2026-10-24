@@ -114,6 +114,32 @@
       .sort((a, b) => b.saves_usd - a.saves_usd);
   }
 
+  // Narrows the estimate using gallons the farm actually burned.
+  // Same shape as wideRange so the interface can use either one.
+  function calibrate(record, actualGallons) {
+    if (!record || typeof record !== 'object') {
+      throw new TypeError('record must be an object with sqft and covering');
+    }
+    if (typeof actualGallons !== 'number' || !Number.isFinite(actualGallons) || actualGallons < 0) {
+      throw new TypeError(`actualGallons must be a non-negative number, got ${actualGallons}`);
+    }
+    const predicted = pointEstimate(record.sqft, record.covering).gal;
+    if (predicted <= 0) {
+      throw new RangeError('predicted gallons is 0; cannot calibrate a building with no area');
+    }
+    const factor = Math.round((actualGallons / predicted) * 100) / 100;
+    const method = `Calibrated to ${actualGallons} gallons actually burned. This house runs ${factor.toFixed(2)}x our size-only model.`;
+    return {
+      low: toEstimate(actualGallons * 0.9),
+      high: toEstimate(actualGallons * 1.1),
+      // point carries a method, as wideRange's point does.
+      point: { ...toEstimate(actualGallons), method },
+      confidence: 'narrowed',
+      factor,
+      method,
+    };
+  }
+
   return Object.freeze({
     BASE_GAL_PER_SQFT,
     U,
@@ -121,5 +147,6 @@
     pointEstimate,
     wideRange,
     rankedFixes,
+    calibrate,
   });
 });
