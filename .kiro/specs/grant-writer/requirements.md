@@ -10,12 +10,15 @@ The Nova client `agents/nova_api.js` is in scope (Requirement 1). AWS access is 
 
 Assumptions and accepted trade-offs:
 - The top fix is the element of `record.fixes` with the largest `saves_usd`. On a tie, the earliest element in the array wins. The user can override this rule.
-- `farmer_match` = `top_fix_cost_usd` − `grant_request`. The user did not define `farmer_match`; this is the natural reading.
-- Rounding happens in `flatten`, so the stored value equals the displayed value: `grant_request` and `farmer_match` to whole dollars, `gallons_saved` to whole gallons, `co2_tons_saved` to one decimal place. `farmer_match` uses the rounded `grant_request` and `co2_tons_saved` uses the rounded `gallons_saved`, so the displayed numbers agree with each other.
 - A number that appears inside a Flat_Record string field (for example a digit in `name`) counts as a Flat_Record value in `checkNumbers`. The user accepted this: Templates are digit-free, so `checkNumbers` is a backstop, not the primary guard.
 
+Confirmed by the user:
+- `farmer_match` = `top_fix_cost_usd` − `grant_request`.
+- Rounding happens in `flatten`, so the stored value equals the displayed value: `grant_request` and `farmer_match` to whole dollars, `gallons_saved` to whole gallons, `co2_tons_saved` to one decimal place. `farmer_match` uses the rounded `grant_request` and `co2_tons_saved` uses the rounded `gallons_saved`, so the displayed numbers agree with each other.
+- `fill` throws on a Placeholder whose key is missing from the Flat_Record (Requirement 3.8), and `flatten` omits Derived_Fields with invalid inputs so that `fill` throws on them (Requirement 3.5).
+
 Notes:
-- The constants 0.8 (grant share), 50000 (grant cap in USD) and 5.72 (kg CO2 per gallon, a propane factor) are supplied by the user. The 80% and $50,000 figures must be confirmed against the Rulebook before submission, because the steering file forbids invented cost-share percentages.
+- The constants 0.8 (grant share) and 50000 (grant cap in USD) are confirmed by the state's CSAP rulebook: a minimum 20% cash match, and a Greenhouse Energy Efficiency maximum of $50,000. Source: "CSAP FY26 RFR and Round II how-to page". The constant 5.72 (kg CO2 per gallon, a propane factor) is supplied by the user.
 - `grant_request`, `farmer_match`, `gallons_saved` and `co2_tons_saved` are numeric derivations that live in `agents/`. The steering file normally gives numeric work to Person B; the user chose this placement.
 
 Design decisions flagged for the design phase:
@@ -36,7 +39,7 @@ Design decisions flagged for the design phase:
 - **Rulebook**: The file `agents/rulebook.pdf` on local disk.
 - **Record**: One greenhouse object matching the frozen shape in `data/record-shape.md`.
 - **Top_Fix**: The element of `record.fixes` with the largest `saves_usd`; on a tie, the earliest such element in the array.
-- **Grant_Constants**: The named constants `GRANT_SHARE` = 0.8, `GRANT_CAP_USD` = 50000 and `CO2_KG_PER_GALLON` = 5.72.
+- **Grant_Constants**: The named constants `GRANT_SHARE` = 0.8 and `GRANT_CAP_USD` = 50000 (source: "CSAP FY26 RFR and Round II how-to page", which sets a minimum 20% cash match and a Greenhouse Energy Efficiency maximum of $50,000), and `CO2_KG_PER_GALLON` = 5.72 (source: user-supplied propane factor).
 - **Derived_Field**: One of `estimate_low`, `estimate_high`, `estimate_point`, `top_fix_name`, `top_fix_saves_usd`, `top_fix_cost_usd`, `top_fix_payback_years`, `grant_request`, `farmer_match`, `gallons_saved`, `co2_tons_saved`. Derived_Fields are computed by `flatten` and are not Record fields.
 - **Flat_Record**: The new object returned by `flatten(record)`: every Record field unchanged, plus each Derived_Field whose inputs are valid under Requirement 3.
 - **Placeholder_Name**: A Record top-level scalar field name other than `bays` (`id`, `name`, `lat`, `lon`, `sqft`, `covering`, `town`, `utility`, `hdd`, `price_per_gal`), or a Derived_Field name.
@@ -94,7 +97,7 @@ Design decisions flagged for the design phase:
 
 #### Acceptance Criteria
 
-1. THE Grant_Writer SHALL define the Grant_Constants as named constants in `agents/` code, each with a comment giving the constant's source.
+1. THE Grant_Writer SHALL define the Grant_Constants as named constants in `agents/` code, each with a comment giving the constant's source, where the comments for `GRANT_SHARE` and `GRANT_CAP_USD` cite "CSAP FY26 RFR and Round II how-to page".
 2. WHEN `flatten(record)` is called on a Record with an `estimate` object, THE Grant_Writer SHALL set `estimate_low`, `estimate_high` and `estimate_point` to `estimate.low`, `estimate.high` and `estimate.point`.
 3. WHEN `flatten(record)` is called on a Record with at least one element in `fixes`, THE Grant_Writer SHALL set the `top_fix_*` Derived_Fields to the Top_Fix's `name`, `saves_usd`, `cost_usd` and `payback_years`, set `grant_request` to min(`GRANT_SHARE` × `top_fix_cost_usd`, `GRANT_CAP_USD`) rounded to whole dollars, and set `farmer_match` to `top_fix_cost_usd` − `grant_request` rounded to whole dollars.
 4. WHEN `flatten(record)` is called on a Record with at least one element in `fixes` and a `price_per_gal` that is a number greater than zero, THE Grant_Writer SHALL set `gallons_saved` to `top_fix_saves_usd` / `price_per_gal` rounded to whole gallons and `co2_tons_saved` to `gallons_saved` × `CO2_KG_PER_GALLON` / 1000 rounded to one decimal place.

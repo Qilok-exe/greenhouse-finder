@@ -4,7 +4,7 @@ fileMatchPattern: "agents/**"
 ---
 # Person A: the language layer (agents/)
 
-You are helping Person A. Person A owns everything written in words. Person B owns everything that must be numerically right. A model never produces a number in this project: it produces sentences with holes, and code fills the holes.
+You are helping Person A. Person A owns everything written in words. Person B owns everything that must be numerically right, with one recorded exception: the grant calculations (see "Recorded departures" below). A model never produces a number in this project: it produces sentences with holes, and code fills the holes.
 
 ## Ownership
 - Person A owns: agents/ (nova_api.js, grant_writer.js, reviewer.js, check_numbers.js, browser.js, cache/).
@@ -24,7 +24,7 @@ You are helping Person A. Person A owns everything written in words. Person B ow
 - Precompute every model call and cache results in agents/cache/. The web page never calls the model live.
 
 ## The placeholder rule (non-negotiable)
-- Write application prose only. Every quantity, cost, saving, area or date is a placeholder in curly braces, named exactly as a field in data/record-shape.md, for example {sqft}.
+- Write application prose only. Every quantity, cost, saving, area or date is a placeholder in curly braces, named exactly as a field in data/record-shape.md or a derived field created by flatten(record), for example {sqft} or {grant_request}.
 - Never write a digit. If no placeholder exists for something, write {UNKNOWN: what is missing}.
 - fill(template, record) replaces placeholders from the record and throws on a missing key. A crash is better than a wrong number.
 - Let the model extract the section names from the rulebook instead of hardcoding them.
@@ -36,10 +36,15 @@ You are helping Person A. Person A owns everything written in words. Person B ow
 
 ## Reviewer
 - Weights from the state's rulebook: applicant 10, project details 30, feasibility 25, long-term impact 20, financing and documents 15. Ratings: Very Good, Good, Fair, Poor, No Evidence.
-- Code gates from record.evidence: has_budget, has_quote, has_baseline (bill uploaded), match_is_cash, nothing_bought.
+- Code gates: has_budget, has_quote and has_baseline (bill uploaded) come from record.evidence. match_is_cash and nothing_bought come from the two checkboxes in agents/browser.js (read them with getApplicantChecks()), not from the record.
 - The model only rates whether each written section reads as Very Good, Good, Fair or Poor, with a one-line reason, at temperature 0, cached.
 - The state publishes weights but not points per rating, so the number is called a "practice score" everywhere.
 - The score must never rise without real evidence.
+
+## Recorded departures (grant-writer spec)
+These were decided by Person A and override the defaults above.
+1. Applicant checks come from checkboxes. "Match is cash" and "Nothing bought yet" are two checkboxes rendered inside `<div id="agent-output">`. Their state (match_is_cash, nothing_bought, both false by default) is held in memory in agents/browser.js. It is never stored in the record and never written to data/.
+2. The grant calculations live in agents/. flatten(record) in agents/grant_writer.js derives grant_request, farmer_match, gallons_saved and co2_tons_saved (plus the flat estimate_* and top_fix_* fields). The constants are GRANT_SHARE = 0.8 and GRANT_CAP_USD = 50000 (source: CSAP FY26 RFR and Round II how-to page: minimum 20% cash match, Greenhouse Energy Efficiency maximum $50,000) and CO2_KG_PER_GALLON = 5.72. All other numeric work stays with Person B.
 
 ## Order of work
 1. One Nova call working: text first, then the PDF.

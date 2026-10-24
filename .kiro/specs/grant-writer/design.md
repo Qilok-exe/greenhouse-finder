@@ -8,7 +8,7 @@ Stack findings (workspace inspection): no `package.json`, `calculator.js` and `a
 - Shared modules are classic scripts with a small UMD wrapper (`module.exports` in Node, one global in the browser). ES modules are avoided because `<script type="module">` fails under `file://`.
 - The browser reads the cache through a generated script, `agents/cache/manifest.js`, instead of `fetch`.
 
-Integration points owned by Person B (to agree, not to edit): `app.html` needs the `<script>` tags listed under Architecture, a `<div id="agent-output">`, and a call to `AgentView.render(record)` when a greenhouse is selected. `data/greenhouses_hampshire.json` does not yet match `data/record-shape.md` (no `fixes`, `estimate`, `evidence`), so tests use Person A fixtures in `agents/test/fixtures/`.
+Integration points owned by Person B (to agree, not to edit): `app.html` needs the `<script>` tags listed under Architecture, a `<div id="agent-output">`, and a call to `AgentView.render(record)` when a greenhouse is selected. Ready-to-paste snippets for all three are in `agents/INTEGRATION.md`. `data/greenhouses_hampshire.json` does not yet match `data/record-shape.md` (no `fixes`, `estimate`, `evidence`), so tests use Person A fixtures in `agents/test/fixtures/`.
 
 ## Architecture
 
@@ -60,7 +60,7 @@ All files live in `agents/`. "UMD" means the file works as a Node module and as 
 - `askNova(prompt): Promise<string>`
 - `askNovaWithPdf(prompt, pdfBytes: Uint8Array): Promise<string>`
 - Constants: `REGION = "us-east-1"`, `MODEL_ID = "us.amazon.nova-2-lite-v1:0"`.
-- Live mode (`AWS_BEARER_TOKEN_BEDROCK` set): one `ConverseCommand` from `@aws-sdk/client-bedrock-runtime` per call, `inferenceConfig: { temperature: 0 }`. The PDF goes in a document block, `{ document: { format: "pdf", name: "rulebook", source: { bytes } } }`, next to the text block. Returns the concatenated text blocks of `output.message.content`. The rulebook is 1,898,292 bytes, under the Converse per-document size limit.
+- Live mode (`AWS_BEARER_TOKEN_BEDROCK` set), deferred until the user says AWS access is ready: one `ConverseCommand` from `@aws-sdk/client-bedrock-runtime` per call, `inferenceConfig: { temperature: 0 }`. The PDF goes in a document block, `{ document: { format: "pdf", name: "rulebook", source: { bytes } } }`, next to the text block. Returns the concatenated text blocks of `output.message.content`. The rulebook is 1,898,292 bytes, under the Converse per-document size limit.
   - Verify when AWS access arrives: whether the installed SDK version picks up `AWS_BEARER_TOKEN_BEDROCK` automatically ([aws-sdk-js-v3 issue #7204](https://github.com/aws/aws-sdk-js-v3/issues/7204)). Fallback if it does not: `fetch` to `https://bedrock-runtime.us-east-1.amazonaws.com/model/<modelId>/converse` with header `Authorization: Bearer <token>`, as described in [Use an Amazon Bedrock API key](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys-use.html). The token is read from the environment only and never logged.
 - Mock mode (variable unset): logs `MOCK MODE`, makes no network call, reads `agents/cache/mock/<key>.json` where `key = cacheKey(MODEL_ID, prompt, pdfBytes)`, and returns its `text` field. A missing file throws `Mock response missing: <absolute path>`. Mock mode is built and tested first.
 
@@ -73,7 +73,7 @@ All files live in `agents/`. "UMD" means the file works as a Node module and as 
   4. Write `{ "text": text }` to `<key>.json.tmp`, then rename it to `<key>.json`. Creates `agents/cache/` if absent. On failure, delete the tmp file and throw naming the path (5.7).
 
 ### `grant_writer.js` (UMD, global `AgentGrantWriter`)
-- Constants, each with a source comment: `GRANT_SHARE = 0.8`, `GRANT_CAP_USD = 50000` (both user-supplied, to be confirmed against the Rulebook before submission), `CO2_KG_PER_GALLON = 5.72` (user-supplied propane factor).
+- Constants, each with a source comment: `GRANT_SHARE = 0.8`, `GRANT_CAP_USD = 50000` (both confirmed by the state's CSAP rulebook: minimum 20% cash match, Greenhouse Energy Efficiency maximum $50,000; source comment cites "CSAP FY26 RFR and Round II how-to page"), `CO2_KG_PER_GALLON = 5.72` (user-supplied propane factor).
 - `PLACEHOLDER_NAMES`: `id, name, lat, lon, sqft, covering, town, utility, hdd, price_per_gal` plus the 11 Derived_Fields. `bays` is excluded.
 - `QUOTE_REQUEST_TEMPLATE`: digit-free code constant (see Architecture).
 - `async extractSections(deps): Section[]`

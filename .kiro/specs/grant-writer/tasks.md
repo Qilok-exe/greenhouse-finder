@@ -10,7 +10,7 @@ Constraints that apply to every task:
 - Templates contain no digits. A model never writes a number; code fills every Placeholder.
 - Never invent a program name, cost-share percentage, deadline or fuel price. Write `{UNKNOWN: ...}` instead.
 
-Hand-off to Person B (not a task): `app.html` needs the script tags in this order: `agents/format.js`, `agents/check_numbers.js`, `agents/grant_writer.js`, `agents/cache/manifest.js`, `agents/browser.js`. It also needs a `<div id="agent-output">` and a call to `AgentView.render(record)` when a greenhouse is selected.
+Hand-off to Person B (not a task): `app.html` needs the script tags in this order: `agents/format.js`, `agents/check_numbers.js`, `agents/grant_writer.js`, `agents/cache/manifest.js`, `agents/browser.js`. It also needs a `<div id="agent-output">` and a call to `AgentView.render(record)` when a greenhouse is selected. The ready-to-paste snippets are already in `agents/INTEGRATION.md`.
 
 ## Tasks
 
@@ -50,7 +50,7 @@ Hand-off to Person B (not a task): `app.html` needs the script tags in this orde
     - Missing mock file throws `Mock response missing: <absolute path>`
     - Export `askNova`, `askNovaWithPdf`, `REGION = "us-east-1"`, `MODEL_ID = "us.amazon.nova-2-lite-v1:0"`
     - _Requirements: 1.2, 1.3_
-  - [ ] 4.2 Write the live Converse path (needs AWS access to verify)
+  - [ ]* 4.2 DEFERRED until the user says AWS is ready: Write the live Converse path
     - One `ConverseCommand` per call, `temperature: 0`, PDF as a `document` block with `format: "pdf"`; return the concatenated text blocks
     - Read the token from the environment only; never log or commit it
     - Add a code comment: verify whether the installed SDK reads `AWS_BEARER_TOKEN_BEDROCK` itself; fallback is `fetch` to the Bedrock `converse` endpoint with `Authorization: Bearer <token>`
@@ -61,7 +61,8 @@ Hand-off to Person B (not a task): `app.html` needs the script tags in this orde
 
 - [ ] 5. Implement the pure parts of `agents/grant_writer.js`
   - [ ] 5.1 Write constants, `PLACEHOLDER_NAMES`, `flatten`, `fill` and `validateTemplate` as a UMD file (global `AgentGrantWriter`, no `require` of Node modules)
-    - `GRANT_SHARE = 0.8`, `GRANT_CAP_USD = 50000`, `CO2_KG_PER_GALLON = 5.72`, each with a source comment (user-supplied; 80% and $50,000 to be confirmed against the Rulebook)
+    - `GRANT_SHARE = 0.8` and `GRANT_CAP_USD = 50000`, with comments citing the CSAP FY26 RFR and Round II how-to page (minimum 20% cash match; Greenhouse Energy Efficiency maximum $50,000)
+    - `CO2_KG_PER_GALLON = 5.72`, with the comment "user-supplied propane factor"
     - `PLACEHOLDER_NAMES`: the ten top-level scalar fields (no `bays`) plus the eleven Derived_Fields
     - `flatten`: follow the derivation table in design.md; omit fields with invalid inputs, never set them to `null`; do not mutate the Record
     - `fill`: single pass; keep Unknown_Markers verbatim; numbers through `formatNumber`; throw once naming every bad or missing token
@@ -140,8 +141,7 @@ Hand-off to Person B (not a task): `app.html` needs the script tags in this orde
 
 - Tasks marked with `*` are optional and can be skipped for a faster MVP.
 - Property tests use fast-check with at least 100 runs and the comment `// Feature: grant-writer, Property <n>: <title>`.
-- Task 4.2 cannot be verified until AWS access arrives. Everything else runs in Mock_Mode.
-- The 80% grant share and $50,000 cap must be confirmed against the Rulebook before submission.
+- Task 4.2 is deferred and marked optional so "Run required tasks" skips it. Do not start it until the user says AWS is ready. Everything else runs in Mock_Mode.
 
 ## Task Dependency Graph
 
