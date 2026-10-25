@@ -7,10 +7,10 @@ Greenhouse finder maps commercial greenhouses in the Connecticut River valley of
 From the project root:
 
 ```
-python3 -m http.server 8000
+https://greenhouseinitiative.netlify.app/app.html
 ```
 
-Then open http://localhost:8000/app.html.
+
 
 ## Data sources
 
