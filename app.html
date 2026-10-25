@@ -6,8 +6,43 @@
 <title>Greenhouse finder — Hampshire County</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Motion (springs for the range line) and NumberFlow (rolling figures). If either
+     fails to load, the panel falls back to instant position and text changes. -->
+<script src="https://cdn.jsdelivr.net/npm/motion@14.6.0/dist/motion.js"
+        integrity="sha384-wyFtoWIFus6Butv1mjUTfcosTs0hTxLly4xsBL9KKBbd+WuuXov75vD9yhy5UZv9" crossorigin="anonymous"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/number-flow@0.6.2/+esm"></script>
 <script src="calculator.js"></script>
 <script src="data/profiles.js"></script>
+<script src="data/worst_case.js"></script>
+<script>
+// Dev-only data switch, never active on a deployed host: ?data=worst | one | empty
+// swaps the dataset before the app reads it, and a small switch sits at the bottom.
+(function () {
+  var dev = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  if (!dev) return;
+  var mode = new URLSearchParams(location.search).get('data') || 'real';
+  if (mode === 'worst' && window.PROFILES_WORST) window.PROFILES = window.PROFILES_WORST;
+  else if (mode === 'one' && Array.isArray(window.PROFILES)) window.PROFILES = window.PROFILES.slice(0, 1);
+  else if (mode === 'empty') window.PROFILES = [];
+  document.addEventListener('DOMContentLoaded', function () {
+    var bar = document.createElement('nav');
+    bar.setAttribute('aria-label', 'Dev data switch');
+    bar.style.cssText = 'position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:2000;' +
+      'display:flex;gap:2px;padding:2px;border-radius:8px;background:#e5e5e5;font:12px/1 system-ui,sans-serif;';
+    [['real', 'Demo data'], ['worst', 'Worst case'], ['one', 'One'], ['empty', 'Empty']].forEach(function (m) {
+      var a = document.createElement('a');
+      a.href = '?data=' + m[0];
+      a.textContent = m[1];
+      var on = m[0] === mode;
+      if (on) a.setAttribute('aria-current', 'page');
+      a.style.cssText = 'padding:6px 10px;border-radius:6px;color:#222;text-decoration:none;' +
+        (on ? 'background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.15);' : '');
+      bar.appendChild(a);
+    });
+    document.body.appendChild(bar);
+  });
+})();
+</script>
 <style>
   :root {
     /* One sequential ramp, pale to dark (ColorBrewer YlOrBr-5). No red/green pairing. */
@@ -21,10 +56,6 @@
     --line: #e4ddd6;
     --bg: #faf8f5;
     --panel-w: 420px;
-    --bar-ms: 900ms;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    :root { --bar-ms: 150ms; }
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
@@ -103,6 +134,11 @@
     #map { height: 60vh; }
     aside { border-left: 0; border-top: 1px solid var(--line); }
   }
+  /* Phones: 32px side padding leaves too little room for the 256px photo. */
+  @media (max-width: 480px) {
+    aside { padding: 24px 16px 40px; }
+    header { padding: 12px 16px 8px; }
+  }
 
   /* Map controls use the page's system font. */
   .leaflet-container { font-family: inherit; }
@@ -146,7 +182,10 @@
     font-size: var(--t-body);
     line-height: 24px;
     font-variant-numeric: tabular-nums;
+    overflow-wrap: break-word;
   }
+  aside ::selection { background: var(--band-1); color: var(--ink); }
+  aside input { caret-color: var(--band-4); }
   .placeholder { margin: 0; color: var(--muted); }
   .panel h2 {
     margin: 0;
@@ -165,6 +204,7 @@
   .aerial-frame {
     position: relative;
     width: 256px;
+    max-width: 100%;
     height: 256px;
     overflow: hidden;
     border: 1px solid #cfc6bd;
@@ -194,8 +234,8 @@
     font-weight: 600;
     letter-spacing: -.01em;
     color: var(--usd);
-    white-space: nowrap;
   }
+  .range-figures > * { white-space: nowrap; }
   .range-figures .dash { color: var(--muted); font-weight: 400; padding: 0 .2em; }
   .range-track { position: relative; height: 24px; }
   .range-track::before {
@@ -204,28 +244,31 @@
     left: 0; right: 0; top: 50%;
     border-top: 1px solid var(--hair);
   }
-  .range-ghost, .range-fill, .range-point, .range-tick, .range-tick-label {
-    position: absolute;
-    transition:
-      left var(--bar-ms) cubic-bezier(.22, .8, .25, 1),
-      width var(--bar-ms) cubic-bezier(.22, .8, .25, 1),
-      opacity var(--bar-ms) ease;
-  }
-  .range-ghost { top: 50%; border-top: 1px dashed var(--muted); opacity: 0; }
+  /* Fill, ticks, dot and tick labels are full-width rails moved with transform
+     (translateX % is of the rail, so of the track); the visible mark sits at the
+     rail's left edge. Motion springs the transforms. */
+  .range-ghost { position: absolute; top: 50%; border-top: 1px dashed var(--muted); opacity: 0; transition: opacity 200ms ease; }
   .range-ghost.show { opacity: 1; }
+  .range-fill, .range-tick, .range-point, .range-tick-label {
+    position: absolute;
+    left: 0; width: 100%;
+    transform-origin: 0 50%;
+    pointer-events: none;
+  }
   .range-fill { top: 50%; height: 2px; margin-top: -1px; background: var(--ink); }
-  .range-tick { top: 6px; width: 1px; height: 12px; margin-left: -.5px; background: var(--ink); }
-  .range-point {
-    top: 50%;
+  .range-tick, .range-point { top: 0; bottom: 0; }
+  .range-tick::before, .range-point::before { content: ""; position: absolute; background: var(--ink); }
+  .range-tick::before { top: 6px; left: -.5px; width: 1px; height: 12px; }
+  .range-point::before {
+    top: 7px; left: -5px;
     width: 10px; height: 10px;
-    margin: -5px 0 0 -5px;
     border-radius: 50%;
-    background: var(--ink);
     box-shadow: 0 0 0 2px #fff;
   }
   .range-ticks { position: relative; height: 16px; margin-top: 4px; }
   .range-tick-label { top: 0; font-size: var(--t-small); line-height: 16px; color: var(--muted); white-space: nowrap; }
-  .no-anim, .no-anim * { transition: none !important; }
+  .range-tick-label span { display: inline-block; }
+  .no-anim .range-ghost { transition: none; }
   .range-best { margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--hair); }
 
   /* Calibration form */
@@ -251,7 +294,12 @@
     cursor: pointer;
   }
   aside button.secondary { background: #fff; color: var(--ink); border-color: #b9aea4; }
+  @media (hover: hover) and (pointer: fine) {
+    aside button:hover { background: #000; }
+    aside button.secondary:hover { background: #f6f2ee; border-color: var(--muted); }
+  }
   aside button:active { transform: scale(.98); }
+  form.calibrate input[aria-invalid="true"] { border-color: #9b1c1c; }
   button:focus-visible, input:focus-visible, select:focus-visible {
     outline: 2px solid var(--ink);
     outline-offset: 2px;
@@ -285,6 +333,7 @@
   #agent-output .agent-quote-request, #agent-output .agent-applicant-checks { margin-top: 32px; }
   #agent-output p { margin: 0; max-width: 65ch; }
   #agent-output .agent-error, #agent-output .agent-quote-missing { color: var(--muted); font-size: var(--t-small); line-height: 20px; }
+  html body #agent-output .agent-fixes-table td { overflow-wrap: anywhere; }
   #agent-output .agent-applicant-checks label { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; }
 
   /* Legend */
@@ -344,6 +393,7 @@
     headline.textContent = 'Could not load data/profiles.js or calculator.js.';
     return;
   }
+  var EMPTY = PROFILES.length === 0;
 
   // ---------- formatting ----------
   var usdFmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
@@ -369,7 +419,7 @@
   var totalSqft = 0, totalUsd = 0;
   PROFILES.forEach(function (r) { totalSqft += r.sqft; totalUsd += r.usd_winter; });
   headline.textContent = '';
-  headline.appendChild(document.createTextNode(int(PROFILES.length) + ' greenhouses'));
+  headline.appendChild(document.createTextNode(int(PROFILES.length) + (PROFILES.length === 1 ? ' greenhouse' : ' greenhouses')));
   headline.appendChild(h('span', { class: 'sep', 'aria-hidden': 'true', text: '·' }));
   headline.appendChild(document.createTextNode(int(totalSqft) + ' sq ft under cover'));
   headline.appendChild(h('span', { class: 'sep', 'aria-hidden': 'true', text: '·' }));
@@ -385,6 +435,10 @@
     { max: 25000,    color: getVar('--band-3'), label: '$10,000 – $25,000' },
     { max: Infinity, color: getVar('--band-4'), label: '$25,000 and over' }
   ];
+  // "Name", or "Unnamed greenhouse, Town" so unnamed ones can be told apart.
+  function label(r) {
+    return r.name || ('Unnamed greenhouse' + (r.town ? ', ' + r.town : ''));
+  }
   function getVar(name) {
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   }
@@ -414,10 +468,16 @@
   baseList.setAttribute('role', 'radiogroup');
   baseList.setAttribute('aria-label', 'Base map');
 
-  var polygons = L.featureGroup().addTo(map);
-  var dots = L.featureGroup();            // shown when zoomed out: buildings are sub-pixel there
+  var polygons = L.featureGroup();        // real outlines, shown past DOT_ZOOM
+  var dots = L.featureGroup();            // shown up to DOT_ZOOM: buildings are sub-pixel there
   var DOT_ZOOM = 15;
   var layerById = {};
+  var dotById = {};
+
+  // White ring so the dots read on aerial photos as well as on streets.
+  function dotStyle(r) {
+    return { radius: 8, color: '#fff', weight: 2, fillColor: bandColor(r.usd_winter), fillOpacity: 0.95 };
+  }
   var selectedId = null;
 
   function baseStyle(r) {
@@ -428,30 +488,38 @@
     // ring is [lon, lat]; Leaflet wants [lat, lon].
     var latlngs = r.ring.map(function (p) { return [p[1], p[0]]; });
     var poly = L.polygon(latlngs, baseStyle(r)).addTo(polygons);
-    var dot = L.circleMarker([r.lat, r.lon], {
-      radius: 6, color: '#3d2a1e', weight: 1, fillColor: bandColor(r.usd_winter), fillOpacity: 0.95
-    }).addTo(dots);
-    var tip = (r.name || 'Unnamed greenhouse') + ' — ' + usd(r.usd_winter);
+    var dot = L.circleMarker([r.lat, r.lon], dotStyle(r)).addTo(dots);
+    var tip = label(r) + ' — ' + usd(r.usd_winter);
     poly.bindTooltip(tip, { sticky: true });
     dot.bindTooltip(tip);
     poly.on('click', function () { select(r); });
     dot.on('click', function () { select(r); });
     layerById[r.id] = poly;
+    dotById[r.id] = dot;
   });
 
   // Sanity check on the axis swap: the first polygon should sit on its record's lat/lon.
-  (function () {
+  if (!EMPTY) (function () {
     var r = PROFILES[0], c = layerById[r.id].getBounds().getCenter();
     if (Math.abs(c.lat - r.lat) > 0.01 || Math.abs(c.lng - r.lon) > 0.01) {
       console.error('ring coordinates look swapped', c, r.lat, r.lon);
     }
   })();
 
-  map.fitBounds(polygons.getBounds(), { padding: [20, 20] });
+  if (EMPTY) {
+    map.setView([42.34, -72.66], 10);   // Hampshire County
+    headline.textContent = 'No greenhouses in the data.';
+    document.querySelector('.placeholder').textContent = 'No greenhouses to show.';
+  } else {
+    map.fitBounds(polygons.getBounds(), { padding: [20, 20] });
+  }
 
+  // Dots up to DOT_ZOOM, real building outlines past it; never both.
   function syncDots() {
-    if (map.getZoom() < DOT_ZOOM) { if (!map.hasLayer(dots)) dots.addTo(map); }
-    else if (map.hasLayer(dots)) map.removeLayer(dots);
+    var showDots = map.getZoom() <= DOT_ZOOM;
+    var show = showDots ? dots : polygons, hide = showDots ? polygons : dots;
+    if (map.hasLayer(hide)) map.removeLayer(hide);
+    if (!map.hasLayer(show)) show.addTo(map);
   }
   map.on('zoomend', syncDots);
   syncDots();
@@ -476,7 +544,7 @@
     .forEach(function (r) {
       jump.appendChild(h('option', {
         value: r.id,
-        text: (r.name || 'Unnamed greenhouse') + ' — ' + int(r.sqft) + ' sq ft, ' + usd(r.usd_winter)
+        text: label(r) + ' — ' + int(r.sqft) + ' sq ft, ' + usd(r.usd_winter)
       }));
     });
   jump.addEventListener('change', function () {
@@ -496,30 +564,59 @@
     return 10 * p;
   }
 
-  // Counts a number from one value to another in sync with the bar transition.
-  function tween(node, from, to, ms) {
-    if (node._raf) cancelAnimationFrame(node._raf);
-    if (from === to || ms <= 0) { node.textContent = usd(to); return; }
-    var t0 = performance.now();
-    function frame(t) {
-      var k = Math.min(1, (t - t0) / ms);
-      var e = 1 - Math.pow(1 - k, 3);
-      node.textContent = usd(Math.round(from + (to - from) * e));
-      if (k < 1) node._raf = requestAnimationFrame(frame);
+  // ---------- motion ----------
+  var SPRING = { type: 'spring', bounce: 0, duration: 0.4 };
+  var EASE_OUT = 'cubic-bezier(0.23, 1, 0.32, 1)';
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var usdFormat = { style: 'currency', currency: 'USD', maximumFractionDigits: 0 };
+
+  // Springs an element's transform to `t`, or sets it at once when not animating,
+  // when the user asks for reduced motion, or when Motion did not load.
+  // A new call interrupts a running spring and starts from where it is.
+  function moveTo(node, t, animate) {
+    if (node._motion) { node._motion.stop(); node._motion = null; }
+    if (animate && window.Motion && !reducedMotion.matches) {
+      var ctl = node._motion = Motion.animate(node, { transform: t }, SPRING);
+      ctl.finished.then(function () {
+        if (node._motion === ctl) { node.style.transform = t; node._motion = null; }
+      });
+    } else {
+      node.style.transform = t;
     }
-    node._raf = requestAnimationFrame(frame);
   }
 
-  function barMs() {
-    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bar-ms')) || 0;
+  // A dollar figure that rolls between values (NumberFlow), or plain text when
+  // NumberFlow did not load. NumberFlow follows prefers-reduced-motion itself.
+  function moneyEl(cls) {
+    if (window.customElements && customElements.get('number-flow')) {
+      var flow = document.createElement('number-flow');
+      flow.locales = 'en-US';
+      flow.format = usdFormat;
+      if (cls) flow.className = cls;
+      return flow;
+    }
+    return h('span', cls ? { class: cls } : null);
+  }
+  function setMoney(node, v, animate) {
+    if (typeof node.update !== 'function') { node.textContent = usd(v); return; }
+    node.animated = !!animate;
+    node.update(v);
+  }
+
+  // Fades freshly rendered panel content in (opacity only, so it stays under
+  // reduced motion too; it carries no movement).
+  function fadeIn(nodes) {
+    nodes.forEach(function (n) {
+      if (n && n.animate) n.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: EASE_OUT });
+    });
   }
 
   function RangeBar(wide) {
     this.wide = wide;
     this.shown = null;
     this.chip = h('span', { class: 'range-status' });
-    this.lowEl = h('span');
-    this.highEl = h('span');
+    this.lowEl = moneyEl();
+    this.highEl = moneyEl();
     this.figures = h('div', { class: 'range-figures' },
       [this.lowEl, h('span', { class: 'dash', 'aria-hidden': 'true', text: '–' }), this.highEl]);
     this.ghost = h('div', { class: 'range-ghost' });
@@ -529,9 +626,11 @@
     this.point = h('div', { class: 'range-point' });
     this.track = h('div', { class: 'range-track', role: 'img' },
       [this.ghost, this.fill, this.lowTick, this.highTick, this.point]);
-    this.lowLabel = h('span', { class: 'range-tick-label' });
-    this.highLabel = h('span', { class: 'range-tick-label' });
-    this.bestEl = h('span', { class: 'usd' });
+    this.lowText = h('span');
+    this.highText = h('span');
+    this.lowLabel = h('div', { class: 'range-tick-label' }, [this.lowText]);
+    this.highLabel = h('div', { class: 'range-tick-label' }, [this.highText]);
+    this.bestEl = moneyEl('usd');
     this.best = h('div', { class: 'row range-best' }, [h('span', { text: 'Best estimate' }), this.bestEl]);
     this.methodEl = h('p', { class: 'note' });
     this.pointMethodEl = h('p', { class: 'note' });
@@ -544,41 +643,44 @@
   }
 
   // Puts the low label to the left of its tick and the high label to the right,
-  // kept inside the track and clear of each other. Positions are in % of the track.
+  // kept inside the track and clear of each other. Returns [low, high] in % of the track.
   RangeBar.prototype.placeLabels = function (lowPct, highPct) {
     var W = this.track.clientWidth;
-    if (!W) { this.lowLabel.style.left = lowPct + '%'; this.highLabel.style.left = highPct + '%'; return; }
-    var lw = this.lowLabel.offsetWidth, hw = this.highLabel.offsetWidth;
+    if (!W) return [lowPct, highPct];
+    var lw = this.lowText.offsetWidth, hw = this.highText.offsetWidth;
     var lx = Math.min(Math.max(0, lowPct / 100 * W - lw - 4), W - lw);
     var hx = Math.min(Math.max(lx + lw + 8, highPct / 100 * W + 4), W - hw);
-    this.lowLabel.style.left = (lx / W * 100) + '%';
-    this.highLabel.style.left = (hx / W * 100) + '%';
+    return [lx / W * 100, hx / W * 100];
   };
 
   RangeBar.prototype.show = function (est, animate) {
     var narrowed = est !== this.wide;
     var max = niceMax(Math.max(this.wide.high.usd, est.high.usd) * 1.05);
     function pct(v) { return (v / max * 100) + '%'; }
+    function at(p) { return 'translateX(' + p + '%)'; }
+    var lowP = est.low.usd / max * 100, highP = est.high.usd / max * 100;
 
     if (!animate) this.root.classList.add('no-anim');
 
-    this.fill.style.left = pct(est.low.usd);
-    this.fill.style.width = pct(est.high.usd - est.low.usd);
-    this.lowTick.style.left = pct(est.low.usd);
-    this.highTick.style.left = pct(est.high.usd);
-    this.point.style.left = pct(est.point.usd);
+    // The wide range stays put; it only fades in behind a narrowed one.
     this.ghost.style.left = pct(this.wide.low.usd);
     this.ghost.style.width = pct(this.wide.high.usd - this.wide.low.usd);
     this.ghost.classList.toggle('show', narrowed);
-    this.lowLabel.textContent = 'Low ' + usd(est.low.usd);
-    this.highLabel.textContent = 'High ' + usd(est.high.usd);
-    this.placeLabels(est.low.usd / max * 100, est.high.usd / max * 100);
 
-    var ms = animate ? barMs() : 0;
-    var prev = this.shown || est;
-    tween(this.lowEl, prev.low.usd, est.low.usd, ms);
-    tween(this.highEl, prev.high.usd, est.high.usd, ms);
-    tween(this.bestEl, prev.point.usd, est.point.usd, ms);
+    this.lowText.textContent = 'Low ' + usd(est.low.usd);
+    this.highText.textContent = 'High ' + usd(est.high.usd);
+    var labels = this.placeLabels(lowP, highP);
+
+    moveTo(this.fill, at(lowP) + ' scaleX(' + ((highP - lowP) / 100) + ')', animate);
+    moveTo(this.lowTick, at(lowP), animate);
+    moveTo(this.highTick, at(highP), animate);
+    moveTo(this.point, at(est.point.usd / max * 100), animate);
+    moveTo(this.lowLabel, at(labels[0]), animate);
+    moveTo(this.highLabel, at(labels[1]), animate);
+
+    setMoney(this.lowEl, est.low.usd, animate);
+    setMoney(this.highEl, est.high.usd, animate);
+    setMoney(this.bestEl, est.point.usd, animate);
 
     this.chip.textContent = narrowed ? 'Narrowed by your fuel use' : 'Wide range';
     // estimate.method is shown only when it adds something beyond point.method.
@@ -632,13 +734,16 @@
     if (selectedId && layerById[selectedId]) {
       var prevRec = PROFILES.find(function (x) { return x.id === selectedId; });
       layerById[selectedId].setStyle(baseStyle(prevRec));
+      dotById[selectedId].setStyle(dotStyle(prevRec));
     }
     selectedId = r.id;
     layerById[r.id].setStyle({ color: '#000', weight: 3 }).bringToFront();
+    dotById[r.id].setStyle({ color: '#000', weight: 3 }).bringToFront();
     if (jump.value !== r.id) jump.value = r.id;
 
     renderPanel(r);
     if (window.AgentView) AgentView.render(r);
+    fadeIn([panel, document.getElementById('agent-output')]);
   }
 
   function renderPanel(r) {
@@ -660,15 +765,31 @@
     var input = h('input', { id: inputId, type: 'number', inputmode: 'decimal', min: '0', step: 'any' });
     var submit = h('button', { type: 'submit', text: 'Narrow the estimate' });
     var reset = h('button', { type: 'button', class: 'secondary', text: 'Reset' });
-    var err = h('p', { class: 'error', role: 'alert' });
+    var err = h('p', { id: inputId + '-error', class: 'error', role: 'alert' });
     err.hidden = true;
+    input.setAttribute('aria-describedby', err.id);
+    function showError(text) {
+      err.textContent = text;
+      err.hidden = false;
+      input.setAttribute('aria-invalid', 'true');
+    }
+    function clearError() {
+      err.hidden = true;
+      input.removeAttribute('aria-invalid');
+    }
     var form = h('form', { class: 'calibrate' }, [
       h('label', { for: inputId, text: 'Gallons burned last winter' }), input, submit, reset
     ]);
     panel.appendChild(section('Narrow it down', [form, err]));
 
     function apply() {
-      err.hidden = true;
+      clearError();
+      // A number input reports "12,000" or "900 gal" as empty; say so instead of
+      // silently showing the baseline.
+      if (input.validity && input.validity.badInput) {
+        showError('Enter the gallons as digits only, without commas or units.');
+        return;
+      }
       var raw = input.value.trim();
       if (raw === '') { showBaseline(); return; }
       var gallons = Number(raw);
@@ -689,8 +810,7 @@
         });
         if (window.AgentView) AgentView.render(view);
       } catch (e) {
-        err.textContent = 'Enter a number of gallons, zero or more.';
-        err.hidden = false;
+        showError('Enter a number of gallons, zero or more.');
       }
     }
     // Size-only baseline: the record's own fixes, computed from usd_winter.
@@ -703,7 +823,7 @@
     input.addEventListener('change', apply);
     reset.addEventListener('click', function () {
       input.value = '';
-      err.hidden = true;
+      clearError();
       showBaseline();
       input.focus();
     });
@@ -738,7 +858,7 @@
 
     // Assumptions
     panel.appendChild(section('Assumptions', [h('table', { class: 'report-table' }, [h('tbody', null, [
-      h('tr', null, [h('th', { scope: 'row', text: 'Covering' }), h('td', { text: r.covering })]),
+      h('tr', null, [h('th', { scope: 'row', text: 'Covering' }), h('td', { text: r.covering.replace(/_/g, ' ') })]),
       h('tr', null, [h('th', { scope: 'row', text: 'Fuel price' }), h('td', { class: 'num' }, [
         h('span', { class: 'usd', text: '$' + r.price_per_gal.toFixed(2) }),
         document.createTextNode(' per gallon')
